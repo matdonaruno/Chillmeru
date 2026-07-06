@@ -11,6 +11,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { TOPICS, RESONANCES } from "../lib/taxonomy.mjs";
+import { redditToken, fetchTop } from "../lib/reddit.mjs";
 
 const COUNTRY = "us";
 const SUBREDDIT = "medlabprofessionals";
@@ -18,48 +19,6 @@ const KEEP = 15;            // フロント表示・保持する最新件数
 const FETCH_LIMIT = 25;     // 1回に見に行く投稿数
 const VOICES_PATH = `data/${COUNTRY}/voices.json`;
 const META_PATH = "data/meta.json";
-
-// ---- Reddit（script アプリの password grant）----
-async function redditToken() {
-  const basic = Buffer.from(
-    `${process.env.REDDIT_CLIENT_ID}:${process.env.REDDIT_CLIENT_SECRET}`
-  ).toString("base64");
-  const body = new URLSearchParams({
-    grant_type: "password",
-    username: process.env.REDDIT_USERNAME,
-    password: process.env.REDDIT_PASSWORD,
-  });
-  const r = await fetch("https://www.reddit.com/api/v1/access_token", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basic}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "User-Agent": process.env.REDDIT_USER_AGENT,
-    },
-    body,
-  });
-  if (!r.ok) throw new Error(`reddit auth ${r.status}`);
-  return (await r.json()).access_token;
-}
-
-async function fetchTop(token) {
-  const url = `https://oauth.reddit.com/r/${SUBREDDIT}/top?t=week&limit=${FETCH_LIMIT}`;
-  const r = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}`, "User-Agent": process.env.REDDIT_USER_AGENT },
-  });
-  if (!r.ok) throw new Error(`reddit fetch ${r.status}`);
-  const json = await r.json();
-  // 必要な生データだけ取り出す（本文bodyは意図的に捨てる）
-  return json.data.children.map((c) => ({
-    id: `reddit_${c.data.name}`,      // name = t3_xxxxx
-    url: `https://www.reddit.com${c.data.permalink}`,
-    raw_title: c.data.title,
-    raw_selftext: c.data.selftext || "",
-    score: c.data.score,
-    num_comments: c.data.num_comments,
-    created_utc: Math.floor(c.data.created_utc),
-  }));
-}
 
 // ---- LLM 要約（JSONのみ返させる）----
 async function summarize(post) {
@@ -130,7 +89,7 @@ async function main() {
   const seen = new Set(existing.map((v) => v.id));
 
   const token = await redditToken();
-  const posts = await fetchTop(token);
+  const posts = await fetchTop(token, { subreddit: SUBREDDIT, limit: FETCH_LIMIT });
   const fresh = posts.filter((p) => !seen.has(p.id));
 
   const now = new Date().toISOString();

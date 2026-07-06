@@ -48,6 +48,20 @@ TELEGRAM_BOT_TOKEN
 TELEGRAM_CHAT_ID
 ```
 
+## Reddit 連携だけ先に確認する
+
+LLM/Telegram を用意する前に、Reddit の認証と取得だけを単体で検証できる。
+Reddit の5つの Secret（`REDDIT_*`）だけ登録すれば動く。
+
+- **GitHub 上で**: Actions → **check-reddit** → *Run workflow*。
+  ログに取得タイトルと指標が出れば成功（`.github/workflows/check-reddit.yml`）。
+- **ローカルで**: 環境変数を渡して `node scripts/check-reddit.mjs`。
+
+script アプリの password grant の注意:
+- 認証に使うアカウントは、その script アプリの **developer** に入れておく。
+- **2FA 有効**なら `REDDIT_PASSWORD` は `パスワード:6桁コード` の形にする。
+- **SSO のみ**（パスワード未設定）のアカウントは password grant 不可。
+
 ## ローカル実行
 ```
 node scripts/fetch-voices.mjs
