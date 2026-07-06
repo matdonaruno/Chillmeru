@@ -1,0 +1,17 @@
+{
+  "name": "chillmeru",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "日本の臨床検査技師が海外の現場の声を日本語で見る、読み取り専用の日次更新サイト",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "fetch": "node scripts/fetch-voices.mjs",
+    "check-reddit": "node scripts/check-reddit.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.0.6"
+  }
+}
