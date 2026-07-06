@@ -1,11 +1,11 @@
 // Reddit 連携の単体スモークテスト。LLM も Telegram も不要。
-// 「認証できる → サブレディットの top を取得できる」ところまでを確認する。
+// 公開JSONエンドポイントで「サブレディットの top を取得できる」ところまでを確認する。
 // データファイルへの書き込みはしない（読み取り専用の疎通確認）。
 //
 // ローカル: 環境変数を渡して `node scripts/check-reddit.mjs`
-// GitHub:   Actions の "check-reddit" ワークフローを手動実行（Reddit の5 Secrets のみでOK）
+// GitHub:   Actions の "check-reddit" ワークフローを手動実行（REDDIT_USER_AGENT のみでOK）
 
-import { redditToken, fetchTop } from "../lib/reddit.mjs";
+import { fetchTop } from "../lib/reddit.mjs";
 
 const SUBREDDIT = process.env.CHECK_SUBREDDIT || "medlabprofessionals";
 const LIMIT = Number(process.env.CHECK_LIMIT || 5);
@@ -13,12 +13,8 @@ const LIMIT = Number(process.env.CHECK_LIMIT || 5);
 async function main() {
   console.log(`▶ Reddit 連携チェック: r/${SUBREDDIT}（top/week, ${LIMIT}件）`);
 
-  console.log("① トークン取得中…");
-  const token = await redditToken();
-  console.log(`  ✓ アクセストークン取得OK（長さ ${token.length}）`);
-
-  console.log("② 投稿取得中…");
-  const posts = await fetchTop(token, { subreddit: SUBREDDIT, limit: LIMIT });
+  console.log("投稿取得中…");
+  const posts = await fetchTop({ subreddit: SUBREDDIT, limit: LIMIT });
   console.log(`  ✓ ${posts.length} 件取得`);
 
   if (!posts.length) {

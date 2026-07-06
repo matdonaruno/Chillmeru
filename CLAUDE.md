@@ -7,14 +7,19 @@
 サーバーレス・gitネイティブな日次更新コンテンツサイト。読み取り専用。
 
 ## 今のところ動くもの / 動かないもの
-- `scripts/fetch-voices.mjs` は **骨格のみ**。`callLLM()` はプレースホルダ実装
-  （Gemini想定のfetch呼び出しは書いてあるが未検証）。実行前に:
-  1. Reddit script アプリを登録し、`.github/workflows/daily.yml` が参照する
-     Secrets（README「必要なSecrets」参照）を GitHub リポジトリに設定
+- Reddit取得（`lib/reddit.mjs`）は認証なしの公開JSONエンドポイントで実装済み・
+  スモークテスト（`scripts/check-reddit.mjs` / `.github/workflows/check-reddit.yml`）あり。
+  2026年の Reddit Responsible Builder Policy で script アプリの新規セルフサーブ
+  作成が実質ブロックされたため、OAuth（password grant）は不採用にした経緯がある。
+  将来レート制限に当たったら公式の非商用データAPI申請への切替を検討する。
+- `scripts/fetch-voices.mjs` は Reddit取得部分以外は**骨格のみ**。`callLLM()` は
+  プレースホルダ実装（Gemini想定のfetch呼び出しは書いてあるが未検証）。実行前に:
+  1. `.github/workflows/daily.yml` が参照する Secrets（README「必要なSecrets」参照）
+     を GitHub リポジトリに設定（Reddit側は `REDDIT_USER_AGENT` のみで足りる）
   2. `callLLM()` を実際に使うLLMプロバイダに合わせて調整・動作確認
   3. `node scripts/fetch-voices.mjs` をローカルで環境変数を渡して試す
 - フロントエンドは**未着手**。`data/*.json` を読むだけのNext.js or Astroを
-  この上に被せる想定（README「構成」参照）。
+  この上に被せる想定(README「構成」参照)。
 
 ## 次にClaude Codeにやってほしそうなタスク（優先順）
 1. `scripts/fetch-voices.mjs` のローカル動作確認・デバッグ

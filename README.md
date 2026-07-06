@@ -29,8 +29,12 @@
 
 ## セットアップ
 
-1. Reddit で **script タイプ**のアプリを登録（client_id / secret を取得）。
-   非商用・低頻度なら無料枠で足りるが、**着手前に現行の規約・レート制限を確認**。
+1. Reddit は**認証なしの公開JSONエンドポイント**（`https://www.reddit.com/r/xxx/top.json`）を使う。
+   script アプリの登録は不要。具体的な `REDDIT_USER_AGENT` を用意するだけでよい。
+   ※ 2026年に Reddit が Responsible Builder Policy を導入し、script アプリの
+   セルフサーブ新規作成が実質ブロックされたための代替。非商用・低頻度なら
+   無料枠で足りるが、**着手前に現行の規約・レート制限を確認**。将来レート制限や
+   ブロックに当たった場合は Reddit の公式データAPI申請（非商用向け）に切り替える。
 2. 安価なLLM（Gemini Flash / Gemma / Bedrock 等）のAPIキーを用意。
    `scripts/fetch-voices.mjs` の `callLLM()` を使うプロバイダに合わせて差し替え。
 3. Telegram: BotFather でボットを作りトークン取得（ボット名も `chillmeru_bot` 等に揃えると統一感が出る）、自分の chat_id を控える。
@@ -38,10 +42,6 @@
 
 ### 必要な Secrets
 ```
-REDDIT_CLIENT_ID
-REDDIT_CLIENT_SECRET
-REDDIT_USERNAME
-REDDIT_PASSWORD
 REDDIT_USER_AGENT   例: chillmeru/0.1 by u/yourname
 LLM_API_KEY
 TELEGRAM_BOT_TOKEN
@@ -50,17 +50,12 @@ TELEGRAM_CHAT_ID
 
 ## Reddit 連携だけ先に確認する
 
-LLM/Telegram を用意する前に、Reddit の認証と取得だけを単体で検証できる。
-Reddit の5つの Secret（`REDDIT_*`）だけ登録すれば動く。
+LLM/Telegram を用意する前に、Reddit の取得だけを単体で検証できる。
+`REDDIT_USER_AGENT` の Secret だけ登録すれば動く（認証情報は不要）。
 
 - **GitHub 上で**: Actions → **check-reddit** → *Run workflow*。
   ログに取得タイトルと指標が出れば成功（`.github/workflows/check-reddit.yml`）。
 - **ローカルで**: 環境変数を渡して `node scripts/check-reddit.mjs`。
-
-script アプリの password grant の注意:
-- 認証に使うアカウントは、その script アプリの **developer** に入れておく。
-- **2FA 有効**なら `REDDIT_PASSWORD` は `パスワード:6桁コード` の形にする。
-- **SSO のみ**（パスワード未設定）のアカウントは password grant 不可。
 
 ## ローカル実行
 ```

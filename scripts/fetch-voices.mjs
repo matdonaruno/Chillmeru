@@ -2,7 +2,7 @@
 // 流れ: Reddit取得 → 既出idを除外 → 新着だけLLM要約 → マージして最新N件を書き出し → Telegramにドラフト通知
 //
 // 必要な環境変数（GitHub Secrets）:
-//   REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET / REDDIT_USERNAME / REDDIT_PASSWORD / REDDIT_USER_AGENT
+//   REDDIT_USER_AGENT      （認証なしの公開JSONエンドポイントを使うため、これだけでOK）
 //   LLM_API_KEY            （安価モデル。Gemini Flash / Gemma / Bedrock 等）
 //   TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID
 //
@@ -11,7 +11,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { TOPICS, RESONANCES } from "../lib/taxonomy.mjs";
-import { redditToken, fetchTop } from "../lib/reddit.mjs";
+import { fetchTop } from "../lib/reddit.mjs";
 
 const COUNTRY = "us";
 const SUBREDDIT = "medlabprofessionals";
@@ -88,8 +88,7 @@ async function main() {
   const existing = JSON.parse(await readFile(VOICES_PATH, "utf8").catch(() => "[]"));
   const seen = new Set(existing.map((v) => v.id));
 
-  const token = await redditToken();
-  const posts = await fetchTop(token, { subreddit: SUBREDDIT, limit: FETCH_LIMIT });
+  const posts = await fetchTop({ subreddit: SUBREDDIT, limit: FETCH_LIMIT });
   const fresh = posts.filter((p) => !seen.has(p.id));
 
   const now = new Date().toISOString();

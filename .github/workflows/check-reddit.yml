@@ -1,7 +1,7 @@
 name: check-reddit
 
 # Reddit 連携だけを単体で確認する手動ワークフロー。
-# LLM / Telegram の Secrets は不要。Reddit の5つだけ登録すれば動く。
+# 認証なしの公開JSONエンドポイントを使うため、REDDIT_USER_AGENT だけ登録すれば動く。
 # GitHub → Actions → "check-reddit" → Run workflow で実行し、ログを確認する。
 
 on:
@@ -26,12 +26,8 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Check Reddit auth & fetch
+      - name: Check Reddit fetch
         env:
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
-          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
-          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
           REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
           CHECK_SUBREDDIT: ${{ github.event.inputs.subreddit }}
           CHECK_LIMIT: ${{ github.event.inputs.limit }}
