@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 import {
   TOPIC_LABELS,
   RESONANCE_LABELS,
@@ -9,7 +10,7 @@ import {
 // 1件の「現場の声」カード。SNSの投稿風。原文bodyは持たない設計なので、要約と指標だけを表示する。
 const { voice } = Astro.props;
 const topicLabel = TOPIC_LABELS[voice.topic] ?? voice.topic;
-const topicIcon = TOPIC_ICONS[voice.topic] ?? "🧪";
+const topicIcon = TOPIC_ICONS[voice.topic];
 const resonanceLabel = voice.resonance ? RESONANCE_LABELS[voice.resonance] : null;
 const resonanceIcon = voice.resonance ? RESONANCE_ICONS[voice.resonance] : null;
 
@@ -38,34 +39,33 @@ const when = relativeTime(voice.created_utc);
 ---
 
 <article class="post" data-topic={voice.topic} data-resonance={voice.resonance ?? ""}>
-  <div class={`avatar topic-${voice.topic}`} aria-hidden="true">{topicIcon}</div>
+  <div class="meta">
+    <span class="source">{source}</span>
+    <span class="dot">·</span>
+    <span class="time">{when}</span>
+    <span class={`topic-tag topic-${voice.topic}`}>
+      <Icon name={topicIcon} class="tag-icon" />
+      {topicLabel}
+    </span>
+  </div>
 
-  <div class="body">
-    <div class="meta">
-      <span class="source">{source}</span>
-      <span class="dot">·</span>
-      <span class="time">{when}</span>
-      <span class={`topic-tag topic-${voice.topic}`}>{topicLabel}</span>
-    </div>
+  <h2 class="title">{voice.title_ja}</h2>
+  <p class="summary">{voice.summary_ja}</p>
 
-    <h2 class="title">{voice.title_ja}</h2>
-    <p class="summary">{voice.summary_ja}</p>
+  {
+    resonanceLabel && (
+      <div class={`resonance resonance-${voice.resonance}`}>
+        <Icon name={resonanceIcon} class="r-icon" />
+        {resonanceLabel}
+      </div>
+    )
+  }
 
-    {
-      resonanceLabel && (
-        <div class={`resonance resonance-${voice.resonance}`}>
-          <span class="r-icon" aria-hidden="true">{resonanceIcon}</span>
-          {resonanceLabel}
-        </div>
-      )
-    }
-
-    <div class="actions">
-      <span class="stat" title="スコア"><span aria-hidden="true">▲</span> {voice.score.toLocaleString()}</span>
-      <span class="stat" title="コメント数"><span aria-hidden="true">💬</span> {voice.num_comments.toLocaleString()}</span>
-      <a class="source-link" href={voice.url} target="_blank" rel="noopener noreferrer">
-        元投稿を読む<span aria-hidden="true"> ↗</span>
-      </a>
-    </div>
+  <div class="actions">
+    <span class="stat" title="スコア"><Icon name="arrow-up" /> {voice.score.toLocaleString()}</span>
+    <span class="stat" title="コメント数"><Icon name="message" /> {voice.num_comments.toLocaleString()}</span>
+    <a class="source-link" href={voice.url} target="_blank" rel="noopener noreferrer">
+      元投稿を読む<Icon name="external" />
+    </a>
   </div>
 </article>
