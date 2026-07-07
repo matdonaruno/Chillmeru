@@ -1,0 +1,26 @@
+[
+  {
+    "id": "reddit_t3_sample1",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/sample1/",
+    "title_ja": "夜勤ひとりで検体200件、電話も鳴りっぱなし",
+    "summary_ja": "人員不足のまま負荷だけ増える夜勤の実態への訴え。せめて時給交渉をという声に、同じ状況の共感コメントが多数ついている。",
+    "topic": "workload",
+    "resonance": "moyamoya",
+    "score": 342,
+    "num_comments": 88,
+    "created_utc": 1720000000,
+    "fetched_at": "2026-07-06T06:00:00Z"
+  },
+  {
+    "id": "reddit_t3_sample2",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/sample2/",
+    "title_ja": "遠心分離機のフタ、閉め忘れて回した人",
+    "summary_ja": "うっかりミスの告白スレ。あるあるとして多くの技師が自分の失敗談を返し、笑いと励ましが混ざる流れになっている。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 511,
+    "num_comments": 130,
+    "created_utc": 1720003600,
+    "fetched_at": "2026-07-06T06:00:00Z"
+  }
+]

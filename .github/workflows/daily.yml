@@ -1,0 +1,39 @@
+name: daily-voices
+
+on:
+  schedule:
+    - cron: "0 21 * * *"   # UTC 21:00 = JST 06:00。cronはUTC。無料枠は起動が数分ずれることがある
+  workflow_dispatch: {}     # 手動実行ボタンも付ける
+
+permissions:
+  contents: write           # データJSONをcommit/pushするため
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch, summarize, write
+        env:
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/fetch-voices.mjs
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "sekai-no-lab-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "data: 日次更新 $(date -u +%Y-%m-%d)"
+            git push
+          fi

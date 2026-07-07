@@ -1,0 +1,293 @@
+---
+import VoiceCard from "../components/VoiceCard.astro";
+import { TOPICS, TOPIC_LABELS } from "../../lib/taxonomy.mjs";
+import voices from "../../data/us/voices.json";
+import meta from "../../data/meta.json";
+
+// ビルド時に data/*.json を読み込む純粋な静的サイト（SSG）。
+// 新しい順に並べる（fetch-voices.mjs 側でも並べているが、フロントでも保証しておく）。
+const items = [...voices].sort((a, b) => b.created_utc - a.created_utc);
+
+// 実際に出現する topic だけタブに出す（空タブを作らない）
+const usedTopics = TOPICS.filter((t) => items.some((v) => v.topic === t));
+
+const updated = meta?.updated_at
+  ? new Date(meta.updated_at).toLocaleString("ja-JP", { dateStyle: "medium", timeStyle: "short" })
+  : null;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chillmeru（チルメル）— 海外の検査技師のいま</title>
+    <meta
+      name="description"
+      content="日本の臨床検査技師が、海外の『現場の声』を日本語でサッと見れる窓。読み取り専用・日次更新。"
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <header class="site-head">
+      <div class="wrap">
+        <h1 class="logo">Chillmeru<span class="logo-jp">チルメル</span></h1>
+        <p class="tagline">海外の臨床検査技師の「現場の声」を、日本語でサッと。</p>
+        {updated && <p class="updated">最終更新: {updated}</p>}
+      </div>
+    </header>
+
+    <main class="wrap">
+      <nav class="tabs" aria-label="トピックで絞り込み">
+        <button class="tab is-active" data-filter="all" type="button">すべて</button>
+        {
+          usedTopics.map((t) => (
+            <button class="tab" data-filter={t} type="button">
+              {TOPIC_LABELS[t] ?? t}
+            </button>
+          ))
+        }
+      </nav>
+
+      {
+        items.length === 0 ? (
+          <p class="empty">まだ声がありません。日次パイプラインが動くと、ここに並びます。</p>
+        ) : (
+          <section class="grid">
+            {items.map((v) => <VoiceCard voice={v} />)}
+          </section>
+        )
+      }
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <p>
+          要約はすべて元投稿へリンクしています。原文は保存せず、敬意とトラフィックを原典に返します。
+        </p>
+        <p class="muted">Chillmeru · 非商用 · 読み取り専用</p>
+      </div>
+    </footer>
+
+    <script>
+      // トピックタブでのフィルタ（フレームワーク不要の素のJS）
+      const tabs = document.querySelectorAll<HTMLButtonElement>(".tab");
+      const cards = document.querySelectorAll<HTMLElement>(".card");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const filter = tab.dataset.filter;
+          tabs.forEach((t) => t.classList.toggle("is-active", t === tab));
+          cards.forEach((card) => {
+            const show = filter === "all" || card.dataset.topic === filter;
+            card.style.display = show ? "" : "none";
+          });
+        });
+      });
+    </script>
+
+    <style is:global>
+      :root {
+        --bg: #f4f6f8;
+        --surface: #ffffff;
+        --ink: #1f2933;
+        --ink-soft: #52606d;
+        --line: #e2e8f0;
+        --accent: #2f8f83; /* chill な青緑 */
+        --radius: 14px;
+        --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.05);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f1720;
+          --surface: #17212b;
+          --ink: #e6edf3;
+          --ink-soft: #9fb0bf;
+          --line: #263543;
+          --accent: #56c2b4;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN",
+          "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+        line-height: 1.7;
+      }
+      .wrap {
+        width: min(920px, 100% - 2rem);
+        margin-inline: auto;
+      }
+
+      .site-head {
+        padding: 2.4rem 0 1.6rem;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+      .logo {
+        margin: 0;
+        font-size: 1.9rem;
+        letter-spacing: 0.01em;
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+      }
+      .logo-jp {
+        font-size: 0.9rem;
+        color: var(--ink-soft);
+        font-weight: 500;
+      }
+      .tagline {
+        margin: 0.4rem 0 0;
+        color: var(--ink-soft);
+      }
+      .updated {
+        margin: 0.6rem 0 0;
+        font-size: 0.8rem;
+        color: var(--ink-soft);
+      }
+
+      main {
+        padding: 1.6rem 0 3rem;
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.4rem;
+      }
+      .tab {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-soft);
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .tab:hover {
+        color: var(--ink);
+        border-color: var(--accent);
+      }
+      .tab.is-active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.1rem 1.2rem 1rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+      .card-head {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+      .badge {
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.15rem 0.55rem;
+        border-radius: 999px;
+        line-height: 1.6;
+      }
+      .badge.topic {
+        background: color-mix(in srgb, var(--accent) 14%, transparent);
+        color: var(--accent);
+      }
+      .badge.resonance-aruaru {
+        background: color-mix(in srgb, #f0a500 20%, transparent);
+        color: #b07800;
+      }
+      .badge.resonance-moyamoya {
+        background: color-mix(in srgb, #7c6cf0 20%, transparent);
+        color: #5a4ad1;
+      }
+      @media (prefers-color-scheme: dark) {
+        .badge.resonance-aruaru {
+          color: #ffcf5c;
+        }
+        .badge.resonance-moyamoya {
+          color: #b3a8ff;
+        }
+      }
+
+      .card-title {
+        margin: 0;
+        font-size: 1.08rem;
+        line-height: 1.5;
+      }
+      .card-summary {
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: 0.94rem;
+      }
+      .card-foot {
+        margin-top: auto;
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        font-size: 0.8rem;
+        color: var(--ink-soft);
+      }
+      .metric.date {
+        margin-left: auto;
+      }
+      .source {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+        flex-basis: 100%;
+      }
+      .source:hover {
+        text-decoration: underline;
+      }
+
+      .empty {
+        color: var(--ink-soft);
+        text-align: center;
+        padding: 3rem 0;
+      }
+
+      .site-foot {
+        border-top: 1px solid var(--line);
+        background: var(--surface);
+        padding: 1.6rem 0 2.4rem;
+        font-size: 0.84rem;
+        color: var(--ink-soft);
+      }
+      .site-foot p {
+        margin: 0.2rem 0;
+      }
+      .muted {
+        opacity: 0.75;
+      }
+    </style>
+  </body>
+</html>
