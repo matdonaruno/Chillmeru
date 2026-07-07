@@ -1,37 +1,71 @@
 ---
-import { TOPIC_LABELS, RESONANCE_LABELS } from "../../lib/taxonomy.mjs";
+import Icon from "./Icon.astro";
+import {
+  TOPIC_LABELS,
+  RESONANCE_LABELS,
+  TOPIC_ICONS,
+  RESONANCE_ICONS,
+} from "../../lib/taxonomy.mjs";
 
-// 1件の「現場の声」カード。原文bodyは持たない設計なので、要約と指標だけを表示する。
+// 1件の「現場の声」カード。SNSの投稿風。原文bodyは持たない設計なので、要約と指標だけを表示する。
 const { voice } = Astro.props;
 const topicLabel = TOPIC_LABELS[voice.topic] ?? voice.topic;
+const topicIcon = TOPIC_ICONS[voice.topic];
 const resonanceLabel = voice.resonance ? RESONANCE_LABELS[voice.resonance] : null;
+const resonanceIcon = voice.resonance ? RESONANCE_ICONS[voice.resonance] : null;
 
-const created = new Date(voice.created_utc * 1000).toLocaleDateString("ja-JP", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-});
+// 発信元サブレディットを URL から取り出す（例: r/medlabprofessionals）
+const subMatch = voice.url.match(/reddit\.com\/(r\/[^/]+)/i);
+const source = subMatch ? subMatch[1] : "reddit";
+
+// 相対時間（「3日前」など）。SNSっぽさを出す。
+function relativeTime(unixSec) {
+  const diffMs = unixSec * 1000 - Date.now();
+  const rtf = new Intl.RelativeTimeFormat("ja", { numeric: "auto" });
+  const units = [
+    ["year", 31536000],
+    ["month", 2592000],
+    ["day", 86400],
+    ["hour", 3600],
+    ["minute", 60],
+  ];
+  const absSec = Math.abs(diffMs) / 1000;
+  for (const [unit, sec] of units) {
+    if (absSec >= sec) return rtf.format(Math.round(diffMs / 1000 / sec), unit);
+  }
+  return rtf.format(Math.round(diffMs / 1000 / 60), "minute");
+}
+const when = relativeTime(voice.created_utc);
 ---
 
-<article class="card" data-topic={voice.topic} data-resonance={voice.resonance ?? ""}>
-  <header class="card-head">
-    <span class={`badge topic topic-${voice.topic}`}>{topicLabel}</span>
-    {
-      resonanceLabel && (
-        <span class={`badge resonance resonance-${voice.resonance}`}>{resonanceLabel}</span>
-      )
-    }
-  </header>
+<article class="post" data-topic={voice.topic} data-resonance={voice.resonance ?? ""}>
+  <div class="meta">
+    <span class="source">{source}</span>
+    <span class="dot">·</span>
+    <span class="time">{when}</span>
+    <span class={`topic-tag topic-${voice.topic}`}>
+      <Icon name={topicIcon} class="tag-icon" />
+      {topicLabel}
+    </span>
+  </div>
 
-  <h2 class="card-title">{voice.title_ja}</h2>
-  <p class="card-summary">{voice.summary_ja}</p>
+  <h2 class="title">{voice.title_ja}</h2>
+  <p class="summary">{voice.summary_ja}</p>
 
-  <footer class="card-foot">
-    <span class="metric" title="スコア">▲ {voice.score.toLocaleString()}</span>
-    <span class="metric" title="コメント数">💬 {voice.num_comments.toLocaleString()}</span>
-    <span class="metric date">{created}</span>
-    <a class="source" href={voice.url} target="_blank" rel="noopener noreferrer">
-      元投稿を読む ↗
+  {
+    resonanceLabel && (
+      <div class={`resonance resonance-${voice.resonance}`}>
+        <Icon name={resonanceIcon} class="r-icon" />
+        {resonanceLabel}
+      </div>
+    )
+  }
+
+  <div class="actions">
+    <span class="stat" title="スコア"><Icon name="arrow-up" /> {voice.score.toLocaleString()}</span>
+    <span class="stat" title="コメント数"><Icon name="message" /> {voice.num_comments.toLocaleString()}</span>
+    <a class="source-link" href={voice.url} target="_blank" rel="noopener noreferrer">
+      元投稿を読む<Icon name="external" />
     </a>
-  </footer>
+  </div>
 </article>
