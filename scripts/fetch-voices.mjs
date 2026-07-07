@@ -3,15 +3,16 @@
 //
 // 必要な環境変数（GitHub Secrets）:
 //   REDDIT_USER_AGENT      （認証なしの公開JSONエンドポイントを使うため、これだけでOK）
-//   LLM_API_KEY            （安価モデル。Gemini Flash / Gemma / Bedrock 等）
+//   LLM_API_KEY            （Gemini）
 //   TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID
 //
 // ※ RedditのAPIは非商用・低頻度なら無料枠で足りるが、着手前に現行の規約・レート制限を要確認。
 // ※ 広告運用に振ると商用扱いになり前提が変わる。MVPは非商用で通す。
 
 import { readFile, writeFile } from "node:fs/promises";
-import { TOPICS, RESONANCES } from "../lib/taxonomy.mjs";
 import { fetchTop } from "../lib/reddit.mjs";
+import { summarizePost } from "../lib/llm.mjs";
+import { notifyTelegram } from "../lib/telegram.mjs";
 
 const COUNTRY = "us";
 const SUBREDDIT = "medlabprofessionals";
@@ -20,70 +21,6 @@ const FETCH_LIMIT = 25;     // 1回に見に行く投稿数
 const VOICES_PATH = `data/${COUNTRY}/voices.json`;
 const META_PATH = "data/meta.json";
 
-// ---- LLM 要約（JSONのみ返させる）----
-async function summarize(post) {
-  const prompt = `あなたは臨床検査技師向けメディアの編集者です。以下の海外の投稿を日本語で紹介します。
-原文を転載せず、必ず自分の言葉で要約してください。出力はJSONのみ（前置き・コードフェンス禁止）。
-
-制約:
-- title_ja: 20字前後の日本語見出し
-- summary_ja: 2〜3文の日本語要約（原文の言い回しを写さない）
-- topic: 次のいずれか一つ ${JSON.stringify(TOPICS)}
-- resonance: 共感の種類。当てはまれば ${JSON.stringify(RESONANCES)} のどれか、なければ null
-
-投稿タイトル: ${post.raw_title}
-投稿本文（要約の材料。転載しない）: ${post.raw_selftext.slice(0, 1500)}
-
-出力形式: {"title_ja": "...", "summary_ja": "...", "topic": "...", "resonance": "..." または null}`;
-
-  // TODO: ここを実際の安価モデルの呼び出しに差し替える（Gemini Flash / Gemma / Bedrock 等）。
-  // 下は「JSON文字列を返す」ことだけ守れば何でもよいという前提のプレースホルダ。
-  const text = await callLLM(prompt);
-  const clean = text.replace(/```json|```/g, "").trim();
-  const out = JSON.parse(clean);
-
-  // タクソノミ外の値が来たら安全側に倒す
-  if (!TOPICS.includes(out.topic)) out.topic = "culture";
-  if (out.resonance && !RESONANCES.includes(out.resonance)) out.resonance = null;
-  return out;
-}
-
-async function callLLM(prompt) {
-  // 例: Gemini generateContent。プロバイダに合わせて差し替え可。
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${process.env.LLM_API_KEY}`;
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-  });
-  if (!r.ok) throw new Error(`llm ${r.status}`);
-  const json = await r.json();
-  return json.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
-}
-
-// ---- Telegram ドラフト通知 ----
-async function notifyTelegram(voice) {
-  const intent = `https://x.com/intent/tweet?text=${encodeURIComponent(draftTweet(voice))}`;
-  const msg =
-    `🧪 今日のドラフト\n\n${draftTweet(voice)}\n\n` +
-    `元投稿: ${voice.url}\n\n▶ Xで開く: ${intent}\n（画像は手で添付して最終チェックのうえ投稿）`;
-  const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
-  await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: process.env.TELEGRAM_CHAT_ID,
-      text: msg,
-      disable_web_page_preview: false,
-    }),
-  });
-}
-
-function draftTweet(v) {
-  return `【海外の検査技師のいま】\n${v.title_ja}\n\n${v.summary_ja}\n\n#臨床検査技師 #Chillmeru`;
-}
-
-// ---- メイン ----
 async function main() {
   const existing = JSON.parse(await readFile(VOICES_PATH, "utf8").catch(() => "[]"));
   const seen = new Set(existing.map((v) => v.id));
@@ -94,7 +31,7 @@ async function main() {
   const now = new Date().toISOString();
   const added = [];
   for (const p of fresh) {
-    const s = await summarize(p);
+    const s = await summarizePost(p);
     added.push({
       id: p.id,
       url: p.url,

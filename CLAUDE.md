@@ -11,26 +11,26 @@
   スモークテスト（`scripts/check-reddit.mjs` / `.github/workflows/check-reddit.yml`）あり。
   2026年の Reddit Responsible Builder Policy で script アプリの新規セルフサーブ
   作成が実質ブロックされたため、OAuth（password grant）は不採用にした経緯がある。
-  **実測済みの問題**: GitHub Actionsのホスト型ランナー（ubuntu-latest）のIPからは
-  この無認証パスが403/429で一律ブロックされる（User-Agent無関係、データセンターIP
-  ブロックと推定）。当面は `check-reddit.yml` の `workflow_dispatch` 入力で
-  self-hosted runner（ユーザーのMac→将来Raspberry Pi）を選んで実行する運用。
-  並行してReddit公式の非商用Data API申請を進めており、承認されればOAuthに戻す
-  （README「Reddit 連携だけ先に確認する」参照）。
-- `scripts/fetch-voices.mjs` は Reddit取得部分以外は**骨格のみ**。`callLLM()` は
-  プレースホルダ実装（Gemini想定のfetch呼び出しは書いてあるが未検証）。実行前に:
-  1. `.github/workflows/daily.yml` が参照する Secrets（README「必要なSecrets」参照）
-     を GitHub リポジトリに設定（Reddit側は `REDDIT_USER_AGENT` のみで足りる）
-  2. `callLLM()` を実際に使うLLMプロバイダに合わせて調整・動作確認
-  3. `node scripts/fetch-voices.mjs` をローカルで環境変数を渡して試す
-- フロントエンドは**未着手**。`data/*.json` を読むだけのNext.js or Astroを
-  この上に被せる想定(README「構成」参照)。
+  **実測済みの問題**: `ubuntu-latest` ランナーIPだけでなく、self-hosted runner
+  （自宅Mac、住宅回線IP）からも403/429で一律ブロックされる。curlでブラウザ風
+  ヘッダーを付けても403のままな一方、実ブラウザでは開けるため、TLS指紋レベルの
+  ボット判定と推定（ヘッダー偽装での回避は意図的な対策すり抜けになるため不採用）。
+  **Reddit公式の非商用Data API申請を提出済み（審査待ち）**。承認されれば
+  `oauth.reddit.com` 経由のOAuthに戻す（README「Reddit」参照、過去コミットに
+  OAuth実装あり）。審査結果が来るまでRedditデータの実取得はできない前提で、
+  他の作業はseedデータ（`data/us/voices.json`）で進める。
+- LLM要約（`lib/llm.mjs`、Gemini `gemini-3.5-flash`、構造化出力でJSON強制）と
+  Telegram通知（`lib/telegram.mjs`）は実装済み。それぞれ単体スモークテストあり
+  （`scripts/check-llm.mjs` / `scripts/check-telegram.mjs` とその workflow）。
+  未検証なのは実際のAPIキーでの動作確認のみ（README「各連携を単体で確認する」参照）。
+- フロントエンド（`src/pages/index.astro`、Astro/SSG）は実装済み。topicタブ・
+  resonanceバッジ・ダークモード対応。`npm run build` でseedデータの表示を確認済み。
 
 ## 次にClaude Codeにやってほしそうなタスク（優先順）
-1. `scripts/fetch-voices.mjs` のローカル動作確認・デバッグ
-   （Reddit認証、LLM呼び出し、JSON書き出しの一連が通るか）
-2. フロントエンドの雛形作成（Next.js or Astro、`data/us/voices.json` を
-   topicタブ + resonance（あるある/もやもや）バッジ付きで表示）
+1. LLM_API_KEY / TELEGRAM_BOT_TOKEN・CHAT_ID を使った `check-llm` / `check-telegram`
+   の動作確認（Reddit APIの審査結果を待たずに進められる）
+2. Reddit Data API申請が承認され次第、`lib/reddit.mjs` をOAuth実装に戻し
+   `node scripts/fetch-voices.mjs` を通しで動作確認
 3. 求人（Adzuna API）・給与統計（e-Stat / BLS）の取得スクリプトを
    `fetch-voices.mjs` と同じパターンで追加
 

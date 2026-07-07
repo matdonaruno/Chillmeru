@@ -12,8 +12,12 @@
 - **オーケストレーション**: GitHub Actions の cron（`.github/workflows/daily.yml`）
 - **ストレージ**: リポジトリ内のフラットJSON（git = DB兼履歴。diffがそのままBIPネタ）
 - **処理**: `scripts/fetch-voices.mjs`（Reddit取得 → 既出除外 → 新着だけLLM要約 → 書き出し → Telegramドラフト通知）
+  - `lib/reddit.mjs` / `lib/llm.mjs` / `lib/telegram.mjs` に処理ごとに切り出し、
+    それぞれ単体で検証できる（下記「〜だけ先に確認する」参照）
 - **分類**: `lib/taxonomy.mjs`（唯一の正）／型は `lib/types.ts`
-- **フロント**: 未同梱。Next.js か Astro でこの `data/*.json` を読むだけ（Cloudflare Pages / Vercel 無料枠、`chillmeru.pages.dev` 等のサブドメインでそのまま公開可）
+- **フロント**: `src/pages/index.astro`（Astro、SSG）。`data/*.json` をビルド時に読み込み、
+  topicタブ + resonance（あるある/もやもや）バッジ付きで表示。`npm run build` で `dist/` に出力し、
+  Cloudflare Pages / Vercel の無料枠にそのまま載る（`chillmeru.pages.dev` 等のサブドメイン運用）
 
 ## データモデル（`lib/types.ts`）
 
@@ -35,8 +39,9 @@
    セルフサーブ新規作成が実質ブロックされたための代替。非商用・低頻度なら
    無料枠で足りるが、**着手前に現行の規約・レート制限を確認**。将来レート制限や
    ブロックに当たった場合は Reddit の公式データAPI申請（非商用向け）に切り替える。
-2. 安価なLLM（Gemini Flash / Gemma / Bedrock 等）のAPIキーを用意。
-   `scripts/fetch-voices.mjs` の `callLLM()` を使うプロバイダに合わせて差し替え。
+2. LLMは **Gemini**（`gemini-3.5-flash`、構造化出力でJSONを直接強制）を使用。
+   [Google AI Studio](https://aistudio.google.com/apikey) でAPIキーを発行し `LLM_API_KEY` に設定。
+   別プロバイダに替えたい場合は `lib/llm.mjs` の `callLLM()` を差し替える。
 3. Telegram: BotFather でボットを作りトークン取得（ボット名も `chillmeru_bot` 等に揃えると統一感が出る）、自分の chat_id を控える。
 4. 下記を GitHub リポジトリの **Secrets** に登録。
 
@@ -48,44 +53,77 @@ TELEGRAM_BOT_TOKEN
 TELEGRAM_CHAT_ID
 ```
 
-## Reddit 連携だけ先に確認する
+## 各連携を単体で確認する
 
-LLM/Telegram を用意する前に、Reddit の取得だけを単体で検証できる。
+本パイプラインを1本通す前に、Reddit / LLM / Telegram をそれぞれ単体で検証できる
+（`lib/reddit.mjs` / `lib/llm.mjs` / `lib/telegram.mjs` に分離してあるため）。
+
+### Reddit
+
 `REDDIT_USER_AGENT` の Secret だけ登録すれば動く（認証情報は不要）。
 
 - **GitHub 上で**: Actions → **check-reddit** → *Run workflow*。
   ログに取得タイトルと指標が出れば成功（`.github/workflows/check-reddit.yml`）。
 - **ローカルで**: 環境変数を渡して `node scripts/check-reddit.mjs`。
 
-### ⚠️ GitHub のホスト型ランナーはRedditにブロックされている
+#### ⚠️ GitHub のホスト型ランナーはRedditにブロックされている
 
-実測済み: `ubuntu-latest`（GitHub Actionsの標準環境）のIPから
-`www.reddit.com` / `old.reddit.com` の `.json` / `.rss` に投げると、
-User-Agentの内容に関わらず**すべて403/429**で返ってくる（Redditが
-データセンター系IPからの無認証アクセスを一律ブロックしているため）。
+実測済み: `ubuntu-latest`（GitHub Actionsの標準環境）のIPからも、自宅PCの
+住宅回線IPからも、`www.reddit.com` / `old.reddit.com` の `.json` / `.rss` に
+投げると**すべて403/429**で返ってくる。curlでブラウザそっくりのヘッダーを
+付けても403のままな一方、実際のブラウザで直接開くとJSONが表示されるため、
+単なるUser-Agent/ヘッダーの問題ではなく、TLS通信の"指紋"レベルでボットを
+判別されていると見られる。ヘッダー偽装で回避する方向はReddit側の対策を
+意図的にすり抜ける行為になるため採用しない。
 
-現状の回避策は2つ、並行して進めている:
+現状の対応:
 
-1. **self-hosted runner で自分のPCから実行**（今すぐ動く）
-   - GitHub → Settings → Actions → Runners → **New self-hosted runner**
-     でOSを選ぶと、その場に実行すべきコマンドが表示される。手順に従って
-     ダウンロード・設定・起動（`./run.sh` 相当）すればランナー登録完了。
-   - 起動している間だけ、そのマシンがジョブを受けられる。
-   - `check-reddit` は `workflow_dispatch` の入力で実行環境を選べる
-     （デフォルト `self-hosted`）。GitHub → Actions → check-reddit →
-     Run workflow → runner を `self-hosted` のまま実行。
-   - 常時起動機（Raspberry Pi等）に切り替えたら、`daily.yml` の
-     `runs-on: ubuntu-latest` も `self-hosted` に変えれば日次cronも動く。
-     PCを使うときだけ電源を入れる運用なら、`daily.yml` は当面
-     `ubuntu-latest` のままにして、失敗を許容しつつ2の承認を待つ。
-2. **Reddit公式の非商用Data API申請**（承認待ち、並行進行中）
-   - Reddit Help の「開発者プラットフォームとRedditデータへのアクセス」
-     記事内にある非商用申請リンクから申請。承認されれば `oauth.reddit.com`
-     経由の正規OAuth認証情報が発行され、GitHubのホスト型ランナーからも
-     アクセスできる可能性が高い（ブロックは無認証パス側の挙動のため）。
-   - 承認が来たら `lib/reddit.mjs` をOAuth実装に戻す（過去のコミット参照）。
+1. **self-hosted runner**（Mac/Raspberry Pi等）を用意済み。ただし上記の通り
+   IPの種類を変えても403は解消しなかったため、根本解決にはならない。
+   `check-reddit` の `workflow_dispatch` 入力で実行環境は選べる
+   （`.github/workflows/check-reddit.yml`）。
+2. **Reddit公式の非商用Data API申請を提出済み（審査待ち）**。
+   `support.reddithelp.com` の Data Access Request チケットから、
+   Devvitエコシステムでは対応不可能な理由（外部GitHubリポジトリへの
+   書き込みが前提の設計）を明記して申請済み。承認されれば `oauth.reddit.com`
+   経由の正規OAuth認証情報が発行され、この403を回避できる可能性が高い
+   （このブロックは無認証パス側の挙動と推定されるため）。
+   承認が来たら `lib/reddit.mjs` をOAuth実装に戻す（過去のコミット参照）。
+
+承認待ちの間は、Reddit以外の各連携（下記）とフロントエンドを
+seedデータ（`data/us/voices.json` のサンプル2件）で進められる。
+
+### LLM（Gemini要約）
+
+`LLM_API_KEY` の Secret だけ登録すれば動く。Redditアクセスはブロックされていないので
+通常の `ubuntu-latest` でそのまま動く。
+
+- **GitHub 上で**: Actions → **check-llm** → *Run workflow*
+  （`.github/workflows/check-llm.yml`）。
+- **ローカルで**: `LLM_API_KEY` を渡して `node scripts/check-llm.mjs`。
+
+サンプル投稿1件を要約させ、`title_ja`/`summary_ja`/`topic`/`resonance` が
+taxonomy に沿ったJSONで返るか確認する。
+
+### Telegram
+
+`TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` を登録すれば動く。
+実行すると**本物のテスト通知が実際に届く**。
+
+- **GitHub 上で**: Actions → **check-telegram** → *Run workflow*
+  （`.github/workflows/check-telegram.yml`）。
+- **ローカルで**: 環境変数を渡して `node scripts/check-telegram.mjs`。
 
 ## ローカル実行
+
+フロントエンド（Astroビルド）:
+```
+npm install
+npm run dev       # http://localhost:4321 で確認
+npm run build     # dist/ に静的出力
+```
+
+データパイプライン:
 ```
 node scripts/fetch-voices.mjs
 ```

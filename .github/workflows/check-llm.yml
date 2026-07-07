@@ -1,0 +1,21 @@
+name: check-llm
+
+# LLM要約だけを単体で確認する手動ワークフロー。Reddit/Telegramは不要。
+# LLM_API_KEY だけ登録すれば動く。Geminiへのアクセスはブロックされていないので
+# 通常の ubuntu-latest ランナーで動く（check-reddit と違い self-hosted 不要）。
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check LLM summarize
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        run: node scripts/check-llm.mjs
