@@ -1,37 +1,27 @@
-// Reddit 連携の単体スモークテスト。LLM も Telegram も不要。
-// 公開JSONエンドポイントで「サブレディットの top を取得できる」ところまでを確認する。
-// データファイルへの書き込みはしない（読み取り専用の疎通確認）。
-//
-// ローカル: 環境変数を渡して `node scripts/check-reddit.mjs`
-// GitHub:   Actions の "check-reddit" ワークフローを手動実行（REDDIT_USER_AGENT のみでOK）
+// 一時診断スクリプト。GitHub ActionsのIPからRedditへの複数経路を実測する。
+// 用が済んだら削除する（本体コードではない）。
+const UA = process.env.REDDIT_USER_AGENT || "chillmeru/0.1 diag (by u/testuser)";
+const SUB = "medlabprofessionals";
 
-import { fetchTop } from "../lib/reddit.mjs";
+const targets = [
+  { name: "www.reddit.com .json", url: `https://www.reddit.com/r/${SUB}/top.json?t=week&limit=3`, headers: { "User-Agent": UA } },
+  { name: "old.reddit.com .json", url: `https://old.reddit.com/r/${SUB}/top.json?t=week&limit=3`, headers: { "User-Agent": UA } },
+  { name: "www.reddit.com .rss", url: `https://www.reddit.com/r/${SUB}/top.rss?t=week&limit=3`, headers: { "User-Agent": UA } },
+  { name: "old.reddit.com .rss", url: `https://old.reddit.com/r/${SUB}/top/.rss?t=week&limit=3`, headers: { "User-Agent": UA } },
+  { name: "www.reddit.com .json + Accept", url: `https://www.reddit.com/r/${SUB}/top.json?t=week&limit=3`, headers: { "User-Agent": UA, Accept: "application/json" } },
+];
 
-const SUBREDDIT = process.env.CHECK_SUBREDDIT || "medlabprofessionals";
-const LIMIT = Number(process.env.CHECK_LIMIT || 5);
-
-async function main() {
-  console.log(`▶ Reddit 連携チェック: r/${SUBREDDIT}（top/week, ${LIMIT}件）`);
-
-  console.log("投稿取得中…");
-  const posts = await fetchTop({ subreddit: SUBREDDIT, limit: LIMIT });
-  console.log(`  ✓ ${posts.length} 件取得`);
-
-  if (!posts.length) {
-    throw new Error("0 件でした。サブレディット名や期間を確認してください。");
+for (const t of targets) {
+  try {
+    const r = await fetch(t.url, { headers: t.headers });
+    const text = await r.text();
+    const looksBlocked = /network security|blocked/i.test(text.slice(0, 500));
+    console.log(`\n=== ${t.name} ===`);
+    console.log(`status: ${r.status} ${r.ok ? "OK" : ""}`);
+    console.log(`looks blocked by network security: ${looksBlocked}`);
+    console.log(`body head: ${text.slice(0, 150).replace(/\n/g, " ")}`);
+  } catch (e) {
+    console.log(`\n=== ${t.name} ===`);
+    console.log(`threw: ${e.message}`);
   }
-
-  console.log("\n取得サンプル（本文は保存しない設計なのでタイトルと指標のみ）:");
-  for (const p of posts) {
-    const t = p.raw_title.length > 60 ? p.raw_title.slice(0, 60) + "…" : p.raw_title;
-    console.log(`  • [${p.score}pt / ${p.num_comments}c] ${t}`);
-    console.log(`    ${p.url}`);
-  }
-
-  console.log("\n✅ Reddit 連携は正常です。次は LLM 要約（LLM_API_KEY）へ進めます。");
 }
-
-main().catch((e) => {
-  console.error("\n❌ Reddit 連携チェック失敗:\n" + e.message);
-  process.exit(1);
-});
