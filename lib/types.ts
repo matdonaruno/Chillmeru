@@ -27,6 +27,32 @@ export interface Voice {
   fetched_at: string;
 }
 
+/**
+ * 求人1件（Adzuna API）。個別求人への恒久リンクのみ表示し、
+ * 求人数・平均給与などの集計は表示しない（Adzuna利用規約: 集計の継続表示は書面許可が必要）。
+ */
+export interface Job {
+  /** dedupeキー。AdzunaのJob id */
+  id: string;
+  /** 元求人への恒久リンク（redirect_url）。必ず原典にトラフィックを返す */
+  url: string;
+  /** 日本語の見出し（職種名の意訳） */
+  title_ja: string;
+  /** 日本語要約 1〜2文。Adzunaの抜粋(description)をもとにした意訳、転載ではない */
+  summary_ja: string;
+  /** 求人企業名（Adzunaレスポンスそのまま。個人情報ではなく公開求人情報） */
+  company: string;
+  /** 勤務地表示名 */
+  location: string;
+  /** 提示給与レンジ（USD、年収）。不明な場合は null */
+  salary_min: number | null;
+  salary_max: number | null;
+  /** 求人掲載時刻（ISO8601） */
+  created_utc: string;
+  /** こちらが取得・要約した時刻（ISO8601） */
+  fetched_at: string;
+}
+
 export interface Meta {
   updated_at: string;
   counts: Record<string, number>; // 例: { us: 12 }
