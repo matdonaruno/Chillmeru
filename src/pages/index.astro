@@ -104,6 +104,12 @@ const updated = meta?.updated_at
         --accent-ink: #ffffff;
         --aru: #e8b84b;
         --moya: #9b8cff;
+        /* topic ごとのアクセント（フィードに色のリズムを出す） */
+        --t-workload: #e88a4d;
+        --t-salary: #43b581;
+        --t-career: #5b9bff;
+        --t-certification: #a082f0;
+        --t-culture: #3fb6b6;
         --maxw: 600px;
       }
       @media (prefers-color-scheme: light) {
@@ -119,6 +125,11 @@ const updated = meta?.updated_at
           --accent-ink: #ffffff;
           --aru: #a06a00;
           --moya: #5b46d6;
+          --t-workload: #c2652b;
+          --t-salary: #1f9d63;
+          --t-career: #2563eb;
+          --t-certification: #6d4fd0;
+          --t-culture: #178a8a;
         }
       }
 
@@ -158,7 +169,15 @@ const updated = meta?.updated_at
       }
       .brand { display: flex; align-items: center; gap: 0.4rem; }
       .brand .mark { width: 1.25rem; height: 1.25rem; color: var(--accent); }
-      .brand .name { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.01em; }
+      .brand .name {
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+        background: linear-gradient(90deg, var(--accent), #3fb6b6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
       .brand .sub { font-size: 0.72rem; color: var(--ink-faint); }
       .updated { font-size: 0.72rem; color: var(--ink-faint); white-space: nowrap; }
 
@@ -210,14 +229,27 @@ const updated = meta?.updated_at
       }
 
       /* フィード */
-      .feed { display: flex; flex-direction: column; }
+      .feed { display: flex; flex-direction: column; gap: 0.7rem; padding: 0.85rem; }
 
       .post {
-        padding: 1rem 1rem 0.9rem;
-        border-bottom: 1px solid var(--line);
-        transition: background 0.15s ease;
+        --ac: var(--accent);
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--ac);
+        border-radius: 14px;
+        padding: 0.95rem 1rem 0.9rem;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
       }
-      .post:hover { background: var(--surface); }
+      .post:hover {
+        background: var(--surface-2);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      }
+      .post[data-topic="workload"] { --ac: var(--t-workload); }
+      .post[data-topic="salary"] { --ac: var(--t-salary); }
+      .post[data-topic="career"] { --ac: var(--t-career); }
+      .post[data-topic="certification"] { --ac: var(--t-certification); }
+      .post[data-topic="culture"] { --ac: var(--t-culture); }
 
       .meta {
         display: flex;
@@ -238,8 +270,8 @@ const updated = meta?.updated_at
         font-weight: 700;
         padding: 0.14rem 0.55rem;
         border-radius: 999px;
-        background: color-mix(in srgb, var(--accent) 15%, transparent);
-        color: var(--accent);
+        background: color-mix(in srgb, var(--ac) 16%, transparent);
+        color: var(--ac);
       }
       .tag-icon { width: 0.95em; height: 0.95em; }
 
