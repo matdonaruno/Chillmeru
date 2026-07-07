@@ -11,7 +11,12 @@
   スモークテスト（`scripts/check-reddit.mjs` / `.github/workflows/check-reddit.yml`）あり。
   2026年の Reddit Responsible Builder Policy で script アプリの新規セルフサーブ
   作成が実質ブロックされたため、OAuth（password grant）は不採用にした経緯がある。
-  将来レート制限に当たったら公式の非商用データAPI申請への切替を検討する。
+  **実測済みの問題**: GitHub Actionsのホスト型ランナー（ubuntu-latest）のIPからは
+  この無認証パスが403/429で一律ブロックされる（User-Agent無関係、データセンターIP
+  ブロックと推定）。当面は `check-reddit.yml` の `workflow_dispatch` 入力で
+  self-hosted runner（ユーザーのMac→将来Raspberry Pi）を選んで実行する運用。
+  並行してReddit公式の非商用Data API申請を進めており、承認されればOAuthに戻す
+  （README「Reddit 連携だけ先に確認する」参照）。
 - `scripts/fetch-voices.mjs` は Reddit取得部分以外は**骨格のみ**。`callLLM()` は
   プレースホルダ実装（Gemini想定のfetch呼び出しは書いてあるが未検証）。実行前に:
   1. `.github/workflows/daily.yml` が参照する Secrets（README「必要なSecrets」参照）

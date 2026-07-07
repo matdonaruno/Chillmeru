@@ -57,6 +57,34 @@ LLM/Telegram を用意する前に、Reddit の取得だけを単体で検証で
   ログに取得タイトルと指標が出れば成功（`.github/workflows/check-reddit.yml`）。
 - **ローカルで**: 環境変数を渡して `node scripts/check-reddit.mjs`。
 
+### ⚠️ GitHub のホスト型ランナーはRedditにブロックされている
+
+実測済み: `ubuntu-latest`（GitHub Actionsの標準環境）のIPから
+`www.reddit.com` / `old.reddit.com` の `.json` / `.rss` に投げると、
+User-Agentの内容に関わらず**すべて403/429**で返ってくる（Redditが
+データセンター系IPからの無認証アクセスを一律ブロックしているため）。
+
+現状の回避策は2つ、並行して進めている:
+
+1. **self-hosted runner で自分のPCから実行**（今すぐ動く）
+   - GitHub → Settings → Actions → Runners → **New self-hosted runner**
+     でOSを選ぶと、その場に実行すべきコマンドが表示される。手順に従って
+     ダウンロード・設定・起動（`./run.sh` 相当）すればランナー登録完了。
+   - 起動している間だけ、そのマシンがジョブを受けられる。
+   - `check-reddit` は `workflow_dispatch` の入力で実行環境を選べる
+     （デフォルト `self-hosted`）。GitHub → Actions → check-reddit →
+     Run workflow → runner を `self-hosted` のまま実行。
+   - 常時起動機（Raspberry Pi等）に切り替えたら、`daily.yml` の
+     `runs-on: ubuntu-latest` も `self-hosted` に変えれば日次cronも動く。
+     PCを使うときだけ電源を入れる運用なら、`daily.yml` は当面
+     `ubuntu-latest` のままにして、失敗を許容しつつ2の承認を待つ。
+2. **Reddit公式の非商用Data API申請**（承認待ち、並行進行中）
+   - Reddit Help の「開発者プラットフォームとRedditデータへのアクセス」
+     記事内にある非商用申請リンクから申請。承認されれば `oauth.reddit.com`
+     経由の正規OAuth認証情報が発行され、GitHubのホスト型ランナーからも
+     アクセスできる可能性が高い（ブロックは無認証パス側の挙動のため）。
+   - 承認が来たら `lib/reddit.mjs` をOAuth実装に戻す（過去のコミット参照）。
+
 ## ローカル実行
 ```
 node scripts/fetch-voices.mjs

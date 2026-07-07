@@ -2,11 +2,25 @@ name: check-reddit
 
 # Reddit 連携だけを単体で確認する手動ワークフロー。
 # 認証なしの公開JSONエンドポイントを使うため、REDDIT_USER_AGENT だけ登録すれば動く。
+#
+# 注意: GitHub Actions のホスト型ランナー（ubuntu-latest）のIPはRedditの
+# 無認証パスから既にブロックされていることを確認済み（403/429、User-Agent無関係）。
+# 自分のMac/Raspberry Pi等をランナーに登録した self-hosted 実行が現状の回避策。
+# 詳細は README「Reddit 連携だけ先に確認する」参照。
+#
 # GitHub → Actions → "check-reddit" → Run workflow で実行し、ログを確認する。
 
 on:
   workflow_dispatch:
     inputs:
+      runner:
+        description: "実行環境（selfhosted=自分のPC。GitHub側からのアクセスはブロック済みなのでselfhosted推奨）"
+        required: false
+        default: "self-hosted"
+        type: choice
+        options:
+          - self-hosted
+          - ubuntu-latest
       subreddit:
         description: "確認するサブレディット"
         required: false
@@ -18,7 +32,7 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.runner }}
     steps:
       - uses: actions/checkout@v4
 
