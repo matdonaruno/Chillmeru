@@ -4,7 +4,7 @@
 "chill"（力を抜く／デジタルデトックス）＋「見る」。サーバーレス・gitネイティブ・低コスト。
 読み取り専用の日次更新コンテンツサイト。
 
-暫定ホスティング: `chillmeru.pages.dev`（Cloudflare Pages、独自ドメイン取得前のサブドメイン運用）
+暫定ホスティング: `chillmeru.netlify.app`（Netlify、独自ドメイン取得前のサブドメイン運用）
 アカウント名は X / Telegram / GitHub とも `chillmeru` で統一。
 
 ## 構成
@@ -17,7 +17,7 @@
 - **分類**: `lib/taxonomy.mjs`（唯一の正）／型は `lib/types.ts`
 - **フロント**: `src/pages/index.astro`（Astro、SSG）。`data/*.json` をビルド時に読み込み、
   topicタブ + resonance（あるある/もやもや）バッジ付きで表示。`npm run build` で `dist/` に出力し、
-  Cloudflare Pages / Vercel の無料枠にそのまま載る（`chillmeru.pages.dev` 等のサブドメイン運用）
+  Netlify の無料枠にそのまま載る（`netlify.toml` 同梱、`chillmeru.netlify.app` 等のサブドメイン運用）
 
 ## データモデル（`lib/types.ts`）
 
@@ -128,6 +128,17 @@ npm run build     # dist/ に静的出力
 node scripts/fetch-voices.mjs
 ```
 （上記の環境変数を渡した状態で。手動ならActionsの「Run workflow」でも可）
+
+## デプロイ（Netlify）
+
+1. https://app.netlify.com → **Add new site → Import an existing project**
+2. GitHubを選び、`chillmeru` リポジトリを選択
+3. ビルド設定は `netlify.toml` に同梱済み（`npm run build` / 公開ディレクトリ `dist`）
+   なのでそのまま **Deploy** でよい
+4. 初回デプロイ後、`<サイト名>.netlify.app` のURLが発行される
+   （`chillmeru.netlify.app` を希望する場合は Site settings → Change site name）
+5. `data/*.json` が更新されるたび（`daily.yml` のコミット時）に自動で再ビルド・再デプロイされる
+   （Netlifyはpushをトリガーに自動ビルドする）
 
 ## 投稿フロー（MVP）
 
