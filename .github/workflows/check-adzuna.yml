@@ -1,0 +1,32 @@
+name: check-adzuna
+
+# Adzuna連携だけを単体で確認する手動ワークフロー。LLMは不要。
+# ADZUNA_APP_ID / ADZUNA_APP_KEY だけ登録すれば動く。
+
+on:
+  workflow_dispatch:
+    inputs:
+      what:
+        description: "検索キーワード"
+        required: false
+        default: "medical laboratory technologist"
+      limit:
+        description: "取得件数"
+        required: false
+        default: "5"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check Adzuna search
+        env:
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          CHECK_WHAT: ${{ github.event.inputs.what }}
+          CHECK_LIMIT: ${{ github.event.inputs.limit }}
+        run: node scripts/check-adzuna.mjs

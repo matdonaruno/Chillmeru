@@ -11,13 +11,18 @@
 
 - **オーケストレーション**: GitHub Actions の cron（`.github/workflows/daily.yml`）
 - **ストレージ**: リポジトリ内のフラットJSON（git = DB兼履歴。diffがそのままBIPネタ）
-- **処理**: `scripts/fetch-voices.mjs`（Reddit取得 → 既出除外 → 新着だけLLM要約 → 書き出し → Telegramドラフト通知）
+- **処理（現場の声）**: `scripts/fetch-voices.mjs`（Reddit取得 → 既出除外 → 新着だけLLM要約 → 書き出し → Telegramドラフト通知）
   - `lib/reddit.mjs` / `lib/llm.mjs` / `lib/telegram.mjs` に処理ごとに切り出し、
-    それぞれ単体で検証できる（下記「〜だけ先に確認する」参照）
+    それぞれ単体で検証できる（下記「各連携を単体で確認する」参照）
+- **処理（求人）**: `scripts/fetch-jobs.mjs`（Adzuna検索 → 既出除外 → 新着だけLLM要約 → 書き出し）
+  - `daily.yml` とは独立した `daily-jobs.yml` で動く（Reddit側の問題に影響されないため）
+  - Adzuna利用規約により、個別求人への恒久リンクのみ表示。求人数・平均給与などの
+    **集計は行わない**（フロントにも実装しない）
 - **分類**: `lib/taxonomy.mjs`（唯一の正）／型は `lib/types.ts`
 - **フロント**: `src/pages/index.astro`（Astro、SSG）。`data/*.json` をビルド時に読み込み、
-  topicタブ + resonance（あるある/もやもや）バッジ付きで表示。`npm run build` で `dist/` に出力し、
-  Netlify の無料枠にそのまま載る（`netlify.toml` 同梱、`chillmeru.netlify.app` 等のサブドメイン運用）
+  「現場の声」「求人」をタブで切り替え表示（topicタブ + resonanceバッジ / 給与レンジバッジ）。
+  `npm run build` で `dist/` に出力し、Netlify の無料枠にそのまま載る
+  （`netlify.toml` 同梱、`chillmeru.netlify.app` 等のサブドメイン運用）
 
 ## データモデル（`lib/types.ts`）
 
@@ -43,7 +48,11 @@
    [Google AI Studio](https://aistudio.google.com/apikey) でAPIキーを発行し `LLM_API_KEY` に設定。
    別プロバイダに替えたい場合は `lib/llm.mjs` の `callLLM()` を差し替える。
 3. Telegram: BotFather でボットを作りトークン取得（ボット名も `chillmeru_bot` 等に揃えると統一感が出る）、自分の chat_id を控える。
-4. 下記を GitHub リポジトリの **Secrets** に登録。
+4. Adzuna（求人）: https://developer.adzuna.com/signup でメール登録すると
+   `app_id` / `app_key` が即時発行される。無料枠・非商用利用可だが、
+   **求人数・平均給与などの集計を継続的に表示するには書面の許可が必要**（利用規約）。
+   Chillmeruは個別求人へのリンクバックのみ表示し、集計は行わない設計。
+5. 下記を GitHub リポジトリの **Secrets** に登録。
 
 ### 必要な Secrets
 ```
@@ -51,6 +60,8 @@ REDDIT_USER_AGENT   例: chillmeru/0.1 by u/yourname
 LLM_API_KEY
 TELEGRAM_BOT_TOKEN
 TELEGRAM_CHAT_ID
+ADZUNA_APP_ID
+ADZUNA_APP_KEY
 ```
 
 ## 各連携を単体で確認する
@@ -114,6 +125,15 @@ taxonomy に沿ったJSONで返るか確認する。
   （`.github/workflows/check-telegram.yml`）。
 - **ローカルで**: 環境変数を渡して `node scripts/check-telegram.mjs`。
 
+### Adzuna（求人）
+
+`ADZUNA_APP_ID` / `ADZUNA_APP_KEY` を登録すれば動く。Reddit問題とは無関係に
+通常の `ubuntu-latest` でそのまま動く。
+
+- **GitHub 上で**: Actions → **check-adzuna** → *Run workflow*
+  （`.github/workflows/check-adzuna.yml`）。
+- **ローカルで**: 環境変数を渡して `node scripts/check-adzuna.mjs`。
+
 ## ローカル実行
 
 フロントエンド（Astroビルド）:
@@ -125,7 +145,8 @@ npm run build     # dist/ に静的出力
 
 データパイプライン:
 ```
-node scripts/fetch-voices.mjs
+node scripts/fetch-voices.mjs   # 現場の声（Reddit）
+node scripts/fetch-jobs.mjs     # 求人（Adzuna）
 ```
 （上記の環境変数を渡した状態で。手動ならActionsの「Run workflow」でも可）
 
@@ -151,7 +172,8 @@ node scripts/fetch-voices.mjs
 
 ## 拡張の足し方
 - **国を増やす**: `data/uk/` を作り、スクリプトの `COUNTRY`/`SUBREDDIT` を分岐
-- **求人（Adzuna）/ 給与（e-Stat・BLS）**: 別スクリプト＋別JSONを足すだけ
+- **求人（Adzuna）**: `scripts/fetch-jobs.mjs` / `data/us/jobs.json` として実装済み
+- **給与統計（e-Stat・BLS）**: 別スクリプト＋別JSONを足すだけ（今後の拡張）
 - **通知先を増やす**: `notify*` 関数を足す。n8nは不要、ステップを増やすのがコードでの拡張性
 
 ## 注意

@@ -23,22 +23,34 @@
   Telegram通知（`lib/telegram.mjs`）は実装済み。それぞれ単体スモークテストあり
   （`scripts/check-llm.mjs` / `scripts/check-telegram.mjs` とその workflow）。
   未検証なのは実際のAPIキーでの動作確認のみ（README「各連携を単体で確認する」参照）。
-- フロントエンド（`src/pages/index.astro`、Astro/SSG）は実装済み。topicタブ・
-  resonanceバッジ・ダークモード対応。`npm run build` でseedデータの表示を確認済み。
+- フロントエンド（`src/pages/index.astro`、Astro/SSG）は実装済み。モバイルファーストの
+  グラスモーフィズムUI（ダーク固定）、「現場の声」/「求人」のタブ切り替え、topicタブ・
+  resonanceバッジ・給与レンジバッジ。Netlifyにデプロイ済み（`chillmeru.netlify.app`）。
+- 求人（`lib/adzuna.mjs`、Adzuna API）は実装済み・スモークテストあり
+  （`scripts/check-adzuna.mjs` / `.github/workflows/check-adzuna.yml`）。
+  `daily-jobs.yml` で独立して動く（Reddit側の問題と無関係）。**利用規約により
+  個別求人へのリンクバックのみ表示し、求人数・平均給与などの集計は行わない**
+  （フロントにも実装しない。徹底すること）。未検証なのは実際のAPIキーでの
+  動作確認のみ。
 
 ## 次にClaude Codeにやってほしそうなタスク（優先順）
-1. LLM_API_KEY / TELEGRAM_BOT_TOKEN・CHAT_ID を使った `check-llm` / `check-telegram`
+1. ADZUNA_APP_ID/KEY を使った `check-adzuna` の動作確認、
+   LLM_API_KEY / TELEGRAM_BOT_TOKEN・CHAT_ID を使った `check-llm` / `check-telegram`
    の動作確認（Reddit APIの審査結果を待たずに進められる）
 2. Reddit Data API申請が承認され次第、`lib/reddit.mjs` をOAuth実装に戻し
    `node scripts/fetch-voices.mjs` を通しで動作確認
-3. 求人（Adzuna API）・給与統計（e-Stat / BLS）の取得スクリプトを
-   `fetch-voices.mjs` と同じパターンで追加
+3. 給与統計（e-Stat / BLS）の取得スクリプトを追加。BLSはSOCコード`29-2011`
+   （Medical and Clinical Laboratory Technologists）だがOEWSのseries ID組み立てが複雑、
+   e-Statは統計表ID（statsDataId）を年度ごとにポータルで確認する必要があり、
+   どちらも実装→ワークフロー実行→ずれを直す、の反復が必要な見込み
 
 ## 変更してはいけない設計上の制約
 - **原文bodyを保存・表示しない**。`Voice` 型（`lib/types.ts`）は要約のみ持つ。
   著作権・API規約対策としてスキーマに焼き込んである。緩めない。
 - **topic / resonance の値は `lib/taxonomy.mjs` が唯一の正**。
   スクリプト・フロントとも直接文字列をハードコードせずここを import する。
+- **Adzunaの求人データは集計しない**（求人数・平均給与・トレンド等）。
+  利用規約で継続的な集計表示に書面許可が必要なため。個別求人カードのみ表示する。
 - **n8n / Supabase は使わない**方針で確定済み（README参照）。
   オーケストレーションはGitHub Actions cron、ストレージはリポジトリ内JSON。
 - 投稿は **ドラフト生成＋Telegram通知＋手動投稿**がMVPの形。

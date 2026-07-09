@@ -1,13 +1,16 @@
 ---
 import VoiceCard from "../components/VoiceCard.astro";
+import JobCard from "../components/JobCard.astro";
 import Icon from "../components/Icon.astro";
 import { TOPICS, TOPIC_LABELS, TOPIC_ICONS } from "../../lib/taxonomy.mjs";
 import voices from "../../data/us/voices.json";
+import jobs from "../../data/us/jobs.json";
 import meta from "../../data/meta.json";
 
 // ビルド時に data/*.json を読み込む純粋な静的サイト（SSG）。
 // 新しい順に並べる（fetch-voices.mjs 側でも並べているが、フロントでも保証しておく）。
 const items = [...voices].sort((a, b) => b.created_utc - a.created_utc);
+const jobItems = [...jobs].sort((a, b) => new Date(b.created_utc) - new Date(a.created_utc));
 
 // 実際に出現する topic だけタブに出す（空タブを作らない）
 const usedTopics = TOPICS.filter((t) => items.some((v) => v.topic === t));
@@ -44,40 +47,83 @@ const updated = meta?.updated_at
         {updated && <span class="updated">{updated} 更新</span>}
       </header>
 
-      <p class="lead">海外の臨床検査技師の「現場の声」を、日本語でサッと。</p>
+      <p class="lead">海外の臨床検査技師の「現場の声」と「求人」を、日本語でサッと。</p>
 
-      <nav class="filters" aria-label="トピックで絞り込み">
-        <button class="chip is-active" data-filter="all" type="button">すべて</button>
-        {
-          usedTopics.map((t) => (
-            <button class="chip" data-filter={t} type="button">
-              <Icon name={TOPIC_ICONS[t]} class="chip-icon" />
-              {TOPIC_LABELS[t]}
-            </button>
-          ))
-        }
+      <nav class="views" aria-label="表示を切り替え">
+        <button class="view-tab is-active" data-view="voices" type="button">
+          <Icon name="message" class="chip-icon" /> 現場の声
+        </button>
+        <button class="view-tab" data-view="jobs" type="button">
+          <Icon name="banknote" class="chip-icon" /> 求人
+        </button>
       </nav>
 
-      {
-        items.length === 0 ? (
-          <p class="empty">まだ声がありません。日次パイプラインが動くと、ここに並びます。</p>
-        ) : (
-          <main class="feed">
-            {items.map((v) => <VoiceCard voice={v} />)}
-          </main>
-        )
-      }
+      <section id="view-voices" class="view">
+        <nav class="filters" aria-label="トピックで絞り込み">
+          <button class="chip is-active" data-filter="all" type="button">すべて</button>
+          {
+            usedTopics.map((t) => (
+              <button class="chip" data-filter={t} type="button">
+                <Icon name={TOPIC_ICONS[t]} class="chip-icon" />
+                {TOPIC_LABELS[t]}
+              </button>
+            ))
+          }
+        </nav>
+
+        {
+          items.length === 0 ? (
+            <p class="empty">まだ声がありません。日次パイプラインが動くと、ここに並びます。</p>
+          ) : (
+            <main class="feed">
+              {items.map((v) => <VoiceCard voice={v} />)}
+            </main>
+          )
+        }
+      </section>
+
+      <section id="view-jobs" class="view" hidden>
+        {
+          jobItems.length === 0 ? (
+            <p class="empty">まだ求人がありません。日次パイプラインが動くと、ここに並びます。</p>
+          ) : (
+            <main class="feed">
+              {jobItems.map((j) => <JobCard job={j} />)}
+            </main>
+          )
+        }
+        <p class="attribution">
+          求人情報は <a href="https://www.adzuna.com/" target="_blank" rel="noopener noreferrer">Adzuna</a> の提供です。
+          給与レンジは各求人ページの掲載情報に基づきます。
+        </p>
+      </section>
 
       <footer class="foot">
-        <p>要約はすべて元投稿へリンク。原文は保存せず、敬意とトラフィックを原典に返します。</p>
+        <p>要約はすべて元投稿・元求人へリンク。原文は保存せず、敬意とトラフィックを原典に返します。</p>
         <p class="muted">Chillmeru · 非商用 · 読み取り専用</p>
       </footer>
     </div>
 
     <script>
-      // トピックチップでのフィルタ（フレームワーク不要の素のJS）
+      // 表示切り替え（現場の声 / 求人）
+      const viewTabs = document.querySelectorAll<HTMLButtonElement>(".view-tab");
+      const views = {
+        voices: document.getElementById("view-voices"),
+        jobs: document.getElementById("view-jobs"),
+      };
+      viewTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.view;
+          viewTabs.forEach((t) => t.classList.toggle("is-active", t === tab));
+          Object.entries(views).forEach(([key, el]) => {
+            if (el) el.hidden = key !== target;
+          });
+        });
+      });
+
+      // トピックチップでのフィルタ（現場の声のみ、フレームワーク不要の素のJS）
       const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
-      const posts = document.querySelectorAll<HTMLElement>(".post");
+      const posts = document.querySelectorAll<HTMLElement>("#view-voices .post");
       chips.forEach((chip) => {
         chip.addEventListener("click", () => {
           const filter = chip.dataset.filter;
@@ -100,9 +146,9 @@ const updated = meta?.updated_at
         --accent-ink: #06181a;
         --aru: #ecc978;            /* あるある（淡いアンバー） */
         --moya: #b8afef;           /* もやもや（淡いバイオレット） */
-        --glass: rgba(12, 22, 26, 0.5);
-        --glass-strong: rgba(9, 17, 21, 0.62);
-        --hair: rgba(255, 255, 255, 0.09);
+        --glass: rgba(34, 52, 58, 0.58);
+        --glass-strong: rgba(15, 26, 31, 0.68);
+        --hair: rgba(255, 255, 255, 0.12);
         --maxw: 600px;
       }
 
@@ -185,6 +231,36 @@ const updated = meta?.updated_at
         padding: 1rem 1rem 0.3rem;
         color: var(--ink-soft);
         font-size: 0.92rem;
+      }
+
+      /* 表示切り替え（現場の声 / 求人） */
+      .views {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.8rem 1rem 0;
+      }
+      .view-tab {
+        flex: 1 1 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        appearance: none;
+        border: 1px solid var(--hair);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--ink-soft);
+        padding: 0.55rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .view-tab:hover { color: var(--ink); border-color: var(--accent); }
+      .view-tab.is-active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-ink);
       }
 
       /* トピックのチップ（横スクロール・ガラス） */
@@ -307,6 +383,22 @@ const updated = meta?.updated_at
       .resonance-aruaru { color: var(--aru); }
       .resonance-moyamoya { color: var(--moya); }
 
+      /* 求人カード */
+      .salary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.32rem;
+        margin-top: 0.7rem;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: var(--accent);
+        padding: 0.26rem 0.66rem;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--accent) 14%, transparent);
+        border: 1px solid var(--hair);
+      }
+      .job-post .actions { justify-content: flex-end; }
+
       .actions {
         display: flex;
         align-items: center;
@@ -330,6 +422,15 @@ const updated = meta?.updated_at
       .source-link:hover { text-decoration: underline; }
 
       .empty { color: var(--ink-soft); text-align: center; padding: 4rem 1rem; }
+
+      .attribution {
+        margin: 0;
+        padding: 0.9rem 1.1rem 0.2rem;
+        font-size: 0.78rem;
+        color: var(--ink-faint);
+      }
+      .attribution a { color: var(--accent); text-decoration: none; }
+      .attribution a:hover { text-decoration: underline; }
 
       .foot {
         padding: 1.6rem 1rem 2.6rem;

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "adzuna_sample1",
+    "url": "https://www.adzuna.com/details/sample1",
+    "title_ja": "臨床検査技師（夜勤・大規模病院）",
+    "summary_ja": "総合病院の検査部門での夜勤ポジション。ASCP認定必須、経験2年以上を歓迎。",
+    "company": "Sample Regional Medical Center",
+    "location": "Austin, TX",
+    "salary_min": 68000,
+    "salary_max": 82000,
+    "created_utc": "2026-07-05T00:00:00Z",
+    "fetched_at": "2026-07-06T06:00:00Z"
+  },
+  {
+    "id": "adzuna_sample2",
+    "url": "https://www.adzuna.com/details/sample2",
+    "title_ja": "臨床検査技師（研究ラボ・日勤）",
+    "summary_ja": "民間検査ラボでの日勤ポジション。分子生物学検査の経験者優遇、リモート研修あり。",
+    "company": "Sample Diagnostics Lab",
+    "location": "Denver, CO",
+    "salary_min": 61000,
+    "salary_max": 75000,
+    "created_utc": "2026-07-04T00:00:00Z",
+    "fetched_at": "2026-07-06T06:00:00Z"
+  }
+]
