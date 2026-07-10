@@ -1,15 +1,39 @@
 [
   {
-    "id": "reddit_t3_sample1",
-    "url": "https://www.reddit.com/r/medlabprofessionals/comments/sample1/",
-    "title_ja": "夜勤ひとりで検体200件、電話も鳴りっぱなし",
-    "summary_ja": "人員不足のまま負荷だけ増える夜勤の実態への訴え。せめて時給交渉をという声に、同じ状況の共感コメントが多数ついている。",
+    "id": "reddit_t3_1urbusz",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1urbusz/whats_in_the_tube/",
+    "title_ja": "リチウム入りチューブでリチウム検査？",
+    "summary_ja": "精神科病棟からの検体で、抗凝固剤にリチウムを含むチューブでリチウム値を測ろうとした看護師とのやり取りを描いた投稿。誤った測定表を根拠に食い下がられたが、最終的に師長が仲裁して事なきを得た。『こちらも専門教育を受けている』という技師側のもやもやが滲む一件。",
+    "topic": "culture",
+    "resonance": "moyamoya",
+    "score": 110,
+    "num_comments": 2,
+    "created_utc": 1783598400,
+    "fetched_at": "2026-07-10T13:00:37.205Z"
+  },
+  {
+    "id": "reddit_t3_1upiaaa",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1upiaaa/i_severely_underestimated_mls_before_becoming_a/",
+    "title_ja": "「本物の科学じゃない」と言われる悔しさ",
+    "summary_ja": "化学者から検査技師に転向した投稿者が、想像以上に高度な思考力と忍耐が要る仕事だと痛感したという体験談。他分野の研究者から『本物の科学ではない』と見なされがちな現状に、コメント欄では『縁の下の力持ちこそ検査技師』『トラブル続きの分析装置の方がよほど手強い』といった共感の声が相次いだ。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 520,
+    "num_comments": 60,
+    "created_utc": 1783425600,
+    "fetched_at": "2026-07-10T13:00:37.205Z"
+  },
+  {
+    "id": "reddit_t3_1uoj76i",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uoj76i/in_hospitals_where_there_are_no_overnight/",
+    "title_ja": "採血も検査も夜勤ひとりで抱える限界",
+    "summary_ja": "夜勤ラボが自分一人という病院で、本来の検査業務に加え全病棟の採血まで任され疲弊しているという投稿。看護師側が対応を拒み、時には苛立って検体を投げつけられることもあるといい、精神的にも限界だと訴えている。コメント欄では『それは看護師の仕事』という声が大多数を占めた。",
     "topic": "workload",
     "resonance": "moyamoya",
-    "score": 342,
-    "num_comments": 88,
-    "created_utc": 1720000000,
-    "fetched_at": "2026-07-06T06:00:00Z"
+    "score": 74,
+    "num_comments": 107,
+    "created_utc": 1783339200,
+    "fetched_at": "2026-07-10T13:00:37.205Z"
   },
   {
     "id": "reddit_t3_sample2",
@@ -21,6 +45,18 @@
     "score": 511,
     "num_comments": 130,
     "created_utc": 1720003600,
+    "fetched_at": "2026-07-06T06:00:00Z"
+  },
+  {
+    "id": "reddit_t3_sample1",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/sample1/",
+    "title_ja": "夜勤ひとりで検体200件、電話も鳴りっぱなし",
+    "summary_ja": "人員不足のまま負荷だけ増える夜勤の実態への訴え。せめて時給交渉をという声に、同じ状況の共感コメントが多数ついている。",
+    "topic": "workload",
+    "resonance": "moyamoya",
+    "score": 342,
+    "num_comments": 88,
+    "created_utc": 1720000000,
     "fetched_at": "2026-07-06T06:00:00Z"
   }
 ]
