@@ -5,3 +5,6 @@ dist/
 .next/
 .astro/
 .claude/settings.local.json
+
+# 手動投入用のコピペ置き場。原文を一時的にでもリポジトリに残さないため（README/CLAUDE.md参照）
+data/inbox/

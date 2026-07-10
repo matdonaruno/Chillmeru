@@ -9,20 +9,18 @@
 // ※ RedditのAPIは非商用・低頻度なら無料枠で足りるが、着手前に現行の規約・レート制限を要確認。
 // ※ 広告運用に振ると商用扱いになり前提が変わる。MVPは非商用で通す。
 
-import { readFile, writeFile } from "node:fs/promises";
 import { fetchTop } from "../lib/reddit.mjs";
 import { summarizePost } from "../lib/llm.mjs";
 import { notifyTelegram } from "../lib/telegram.mjs";
+import { readVoices, mergeVoices, writeVoicesAndMeta } from "../lib/voicesStore.mjs";
 
 const COUNTRY = "us";
 const SUBREDDIT = "medlabprofessionals";
 const KEEP = 15;            // フロント表示・保持する最新件数
 const FETCH_LIMIT = 25;     // 1回に見に行く投稿数
-const VOICES_PATH = `data/${COUNTRY}/voices.json`;
-const META_PATH = "data/meta.json";
 
 async function main() {
-  const existing = JSON.parse(await readFile(VOICES_PATH, "utf8").catch(() => "[]"));
+  const existing = await readVoices(COUNTRY);
   const seen = new Set(existing.map((v) => v.id));
 
   const posts = await fetchTop({ subreddit: SUBREDDIT, limit: FETCH_LIMIT });
@@ -46,17 +44,8 @@ async function main() {
     });
   }
 
-  // 新着を前に、スコア/新しさで並べて最新N件だけ保持
-  const merged = [...added, ...existing]
-    .sort((a, b) => b.created_utc - a.created_utc)
-    .slice(0, KEEP);
-
-  await writeFile(VOICES_PATH, JSON.stringify(merged, null, 2) + "\n");
-
-  const meta = JSON.parse(await readFile(META_PATH, "utf8").catch(() => "{}"));
-  meta.updated_at = now;
-  meta.counts = { ...(meta.counts || {}), [COUNTRY]: merged.length };
-  await writeFile(META_PATH, JSON.stringify(meta, null, 2) + "\n");
+  const merged = mergeVoices(existing, added, KEEP);
+  await writeVoicesAndMeta(COUNTRY, merged);
 
   // 新着があれば1件だけドラフト通知（あるある/もやもや優先で選ぶと共感が乗りやすい）
   if (added.length) {

@@ -17,8 +17,10 @@
   ボット判定と推定（ヘッダー偽装での回避は意図的な対策すり抜けになるため不採用）。
   **Reddit公式の非商用Data API申請を提出済み（審査待ち）**。承認されれば
   `oauth.reddit.com` 経由のOAuthに戻す（README「Reddit」参照、過去コミットに
-  OAuth実装あり）。審査結果が来るまでRedditデータの実取得はできない前提で、
-  他の作業はseedデータ（`data/us/voices.json`）で進める。
+  OAuth実装あり）。審査結果が来るまでの**つなぎ**として、`scripts/process-inbox.mjs`
+  （手動投入パイプライン）を実装済み。ブラウザで読んだ投稿を `data/inbox/voices.txt`
+  にコピペで貯め、まとめてLLM要約→`data/us/voices.json`に反映する。inboxは
+  git管理外（原文をリポジトリに残さないため、下の設計制約と同じ理由）。
 - LLM要約（`lib/llm.mjs`、Gemini `gemini-3.5-flash`、構造化出力でJSON強制）と
   Telegram通知（`lib/telegram.mjs`）は実装済み。それぞれ単体スモークテストあり
   （`scripts/check-llm.mjs` / `scripts/check-telegram.mjs` とその workflow）。
@@ -47,6 +49,8 @@
 ## 変更してはいけない設計上の制約
 - **原文bodyを保存・表示しない**。`Voice` 型（`lib/types.ts`）は要約のみ持つ。
   著作権・API規約対策としてスキーマに焼き込んである。緩めない。
+  手動投入用の `data/inbox/` も同じ理由でgit管理外（`.gitignore`）にしてある。
+  ここに新しい「原文を扱う」経路を足すときは、必ずgit管理外にすること。
 - **topic / resonance の値は `lib/taxonomy.mjs` が唯一の正**。
   スクリプト・フロントとも直接文字列をハードコードせずここを import する。
 - **Adzunaの求人データは集計しない**（求人数・平均給与・トレンド等）。

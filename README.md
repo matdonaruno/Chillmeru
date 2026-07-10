@@ -104,6 +104,26 @@ ADZUNA_APP_KEY
 承認待ちの間は、Reddit以外の各連携（下記）とフロントエンドを
 seedデータ（`data/us/voices.json` のサンプル2件）で進められる。
 
+#### つなぎ: 手動投入（`scripts/process-inbox.mjs`）
+
+承認が来るまでの間、ブラウザで手動でReddit投稿を読んで日本語要約を
+反映させる手段。`data/inbox/voices.txt` にコピペで貯めて実行すると、
+自動取得パイプラインと同じLLM要約・スキーマで `data/us/voices.json` に
+追記される。
+
+```
+LLM_API_KEY=... node scripts/process-inbox.mjs
+```
+
+- `data/inbox/voices.txt` は **git管理していない**（`.gitignore`）。
+  原文を一時的にでもリポジトリ（public）に残さないため。要約後の
+  JSON（`data/us/voices.json`）だけがcommit対象になる。
+- 実行すると要約結果がターミナルに表示されるので、そこで内容を確認できる。
+- 実行後、inboxは自動でテンプレートに戻る（次のコピペに備える）。
+- 既出URL（`/comments/<id>/` から復元したidが一致）は自動でスキップされる。
+- フォーマットはinboxファイル自体にコメントとして書いてある
+  （`URL:` / `TITLE:` / `SCORE:` / `COMMENTS:`(省略可) / `BODY:`）。
+
 ### LLM（Gemini要約）
 
 `LLM_API_KEY` の Secret だけ登録すれば動く。Redditアクセスはブロックされていないので

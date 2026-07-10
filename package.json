@@ -9,6 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "fetch": "node scripts/fetch-voices.mjs",
+    "process-inbox": "node scripts/process-inbox.mjs",
     "check-reddit": "node scripts/check-reddit.mjs",
     "check-llm": "node scripts/check-llm.mjs",
     "check-telegram": "node scripts/check-telegram.mjs"
