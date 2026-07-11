@@ -6,6 +6,26 @@
 日本の臨床検査技師が、海外（まずUS）の「現場の声」を日本語でサッと見れる、
 サーバーレス・gitネイティブな日次更新コンテンツサイト。読み取り専用。
 
+## セッション引き継ぎメモ（2026-07-10時点、状況が変わったら更新/削除してよい）
+- **手動投入の運用が変わった**: `LLM_API_KEY=... node scripts/process-inbox.mjs`（Gemini課金あり）
+  ではなく、**Claude Codeとの対話セッション内で直接 `data/inbox/voices.txt` を読んで要約する**
+  運用に切り替え済み（Gemini APIコスト・Netlifyデプロイプレビューのビルド分数、両方の節約が目的）。
+  やり方: 投稿本文（URL込み）をチャットに貼る → Claudeが`lib/llm.mjs`の`summarizePost()`と
+  同じ制約（title_ja ~20字、summary_ja 2-3文、topic/resonanceはtaxonomy準拠）で要約 →
+  `lib/voicesStore.mjs`の`mergeVoices()`/`writeVoicesAndMeta()`と同じロジックで
+  `data/us/voices.json`/`data/meta.json`に反映 → 内容確認 → commit/push。
+  `data/inbox/voices.txt`はgit管理外なので、リモートセッションとローカルとで別ファイル
+  （中身は共有されない）。貼るのはチャット本文に対してであり、ファイル経由ではない。
+- **現状のブランチ・PR状態**: `main`はAdzuna統合まで。以下2つは**まだmainに未マージ**（要ユーザー承認）:
+  - PR #7 `fix/llm-retry-transient-errors`（LLMリトライ実装）
+  - PR #8 `feat/manual-inbox`（手動投入パイプライン一式 + 手動処理した現場の声3件のデータ）
+  PR #8のブランチには、r/medlabprofessionalsから処理した3件（「本物の科学じゃない」と
+  言われる悔しさ／リチウム入りチューブでリチウム検査？／採血も検査も夜勤ひとりで抱える限界）
+  がすでに`data/us/voices.json`にコミット済み。**本番サイトにはまだ出ていない**（PR未マージのため）。
+- **Netlifyビルド分数を節約する方針**: 無料枠を消費しやすいのは「PRブランチへのpush」
+  （Deploy Previewが毎回走る）。見た目確認はローカルの`npm run dev`/`npm run build`で行い、
+  pushはまとめて1回にする。PRのマージ判断が固まるまで新規pushは極力控える。
+
 ## 今のところ動くもの / 動かないもの
 - Reddit取得（`lib/reddit.mjs`）は認証なしの公開JSONエンドポイントで実装済み・
   スモークテスト（`scripts/check-reddit.mjs` / `.github/workflows/check-reddit.yml`）あり。
