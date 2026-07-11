@@ -6,22 +6,36 @@
 日本の臨床検査技師が、海外（まずUS）の「現場の声」を日本語でサッと見れる、
 サーバーレス・gitネイティブな日次更新コンテンツサイト。読み取り専用。
 
-## セッション引き継ぎメモ（2026-07-10時点、状況が変わったら更新/削除してよい）
-- **手動投入の運用が変わった**: `LLM_API_KEY=... node scripts/process-inbox.mjs`（Gemini課金あり）
-  ではなく、**Claude Codeとの対話セッション内で直接 `data/inbox/voices.txt` を読んで要約する**
-  運用に切り替え済み（Gemini APIコスト・Netlifyデプロイプレビューのビルド分数、両方の節約が目的）。
+## セッション引き継ぎメモ（2026-07-11時点、状況が変わったら更新/削除してよい）
+- **手動投入の運用が変わった**: `LLM_API_KEY=... node scripts/process-inbox.mjs`ではなく、
+  **Claude Codeとの対話セッション内で直接 `data/inbox/voices.txt` を読んで要約する**
+  運用に切り替え済み（LLM APIコスト・Netlifyデプロイプレビューのビルド分数、両方の節約が目的）。
   やり方: 投稿本文（URL込み）をチャットに貼る → Claudeが`lib/llm.mjs`の`summarizePost()`と
   同じ制約（title_ja ~20字、summary_ja 2-3文、topic/resonanceはtaxonomy準拠）で要約 →
   `lib/voicesStore.mjs`の`mergeVoices()`/`writeVoicesAndMeta()`と同じロジックで
   `data/us/voices.json`/`data/meta.json`に反映 → 内容確認 → commit/push。
   `data/inbox/voices.txt`はgit管理外なので、リモートセッションとローカルとで別ファイル
   （中身は共有されない）。貼るのはチャット本文に対してであり、ファイル経由ではない。
+- **LLMプロバイダをGeminiからGLMに切替済み**（2026-07-11）: `daily-jobs`実行中に
+  Geminiが`429 quota exceeded`（クォータ超過・課金プラン起因、リトライでは解決しない）
+  で恒久的に失敗したため、`lib/llm.mjs`を智譜AI/Zhipu AIの GLM（`glm-4.7-flash`、
+  `https://open.bigmodel.cn/api/paas/v4/chat/completions`）に全面切替。
+  環境変数名は`LLM_API_KEY`のまま流用（呼び出し側`summarizePost`/`summarizeJob`は無変更）。
+  **要対応**: GitHub Secretsの`LLM_API_KEY`はまだ旧Geminiキーの値のままなので、
+  bigmodel.cnで発行したGLMキーの値に**差し替えが必要**（ユーザーのみ実行可）。
+  差し替えるまで`daily-jobs`/`daily`/`check-llm`は401等で失敗する。
+  GeminiのresponseSchemaと違いGLMの`response_format: json_object`はJSON構造までは
+  強制しないため、期待する形はプロンプト文面に明記し、受け取り側の検証
+  （`TOPICS.includes()`等）で安全側に倒している。
+- **求人カードのスキーマを分割済み**: `summary_ja`単一フィールドから`content_ja`
+  （業務内容）/`qualification_ja`（資格・待遇）の2フィールドに変更し、
+  `JobCard.astro`で内容／報酬／資格のラベル付きスペック表示にした。
 - **現状のブランチ・PR状態**: `main`はAdzuna統合まで。以下2つは**まだmainに未マージ**（要ユーザー承認）:
-  - PR #7 `fix/llm-retry-transient-errors`（LLMリトライ実装）
-  - PR #8 `feat/manual-inbox`（手動投入パイプライン一式 + 手動処理した現場の声3件のデータ）
-  PR #8のブランチには、r/medlabprofessionalsから処理した3件（「本物の科学じゃない」と
-  言われる悔しさ／リチウム入りチューブでリチウム検査？／採血も検査も夜勤ひとりで抱える限界）
-  がすでに`data/us/voices.json`にコミット済み。**本番サイトにはまだ出ていない**（PR未マージのため）。
+  - PR #7 `fix/llm-retry-transient-errors`（LLMリトライ実装。同内容を`feat/manual-inbox`にも
+    直接コミット済みなので、PR#7自体は将来マージしても実質差分なしになる見込み）
+  - PR #8 `feat/manual-inbox`（手動投入パイプライン一式 + 手動処理した現場の声10件のデータ
+    + 求人スキーマ分割 + LLMリトライ + GLM切替）
+  **本番サイトにはまだ出ていない**（PR未マージのため）。
 - **Netlifyビルド分数を節約する方針**: 無料枠を消費しやすいのは「PRブランチへのpush」
   （Deploy Previewが毎回走る）。見た目確認はローカルの`npm run dev`/`npm run build`で行い、
   pushはまとめて1回にする。PRのマージ判断が固まるまで新規pushは極力控える。
@@ -41,7 +55,7 @@
   （手動投入パイプライン）を実装済み。ブラウザで読んだ投稿を `data/inbox/voices.txt`
   にコピペで貯め、まとめてLLM要約→`data/us/voices.json`に反映する。inboxは
   git管理外（原文をリポジトリに残さないため、下の設計制約と同じ理由）。
-- LLM要約（`lib/llm.mjs`、Gemini `gemini-3.5-flash`、構造化出力でJSON強制）と
+- LLM要約（`lib/llm.mjs`、GLM `glm-4.7-flash`、`response_format: json_object`でJSON強制）と
   Telegram通知（`lib/telegram.mjs`）は実装済み。それぞれ単体スモークテストあり
   （`scripts/check-llm.mjs` / `scripts/check-telegram.mjs` とその workflow）。
   未検証なのは実際のAPIキーでの動作確認のみ（README「各連携を単体で確認する」参照）。

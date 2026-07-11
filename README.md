@@ -44,8 +44,9 @@
    セルフサーブ新規作成が実質ブロックされたための代替。非商用・低頻度なら
    無料枠で足りるが、**着手前に現行の規約・レート制限を確認**。将来レート制限や
    ブロックに当たった場合は Reddit の公式データAPI申請（非商用向け）に切り替える。
-2. LLMは **Gemini**（`gemini-3.5-flash`、構造化出力でJSONを直接強制）を使用。
-   [Google AI Studio](https://aistudio.google.com/apikey) でAPIキーを発行し `LLM_API_KEY` に設定。
+2. LLMは **GLM**（智譜AI/Zhipu AI、`glm-4.7-flash`、`response_format: json_object`でJSON強制）を使用。
+   2026-07-11にGemini（クォータ超過で `daily-jobs` が停止）から切替済み。
+   [bigmodel.cn](https://bigmodel.cn/) でAPIキーを発行し `LLM_API_KEY` に設定。
    別プロバイダに替えたい場合は `lib/llm.mjs` の `callLLM()` を差し替える。
 3. Telegram: BotFather でボットを作りトークン取得（ボット名も `chillmeru_bot` 等に揃えると統一感が出る）、自分の chat_id を控える。
 4. Adzuna（求人）: https://developer.adzuna.com/signup でメール登録すると
@@ -124,10 +125,10 @@ LLM_API_KEY=... node scripts/process-inbox.mjs
 - フォーマットはinboxファイル自体にコメントとして書いてある
   （`URL:` / `TITLE:` / `SCORE:` / `COMMENTS:`(省略可) / `BODY:`）。
 
-### LLM（Gemini要約）
+### LLM（GLM要約）
 
-`LLM_API_KEY` の Secret だけ登録すれば動く。Redditアクセスはブロックされていないので
-通常の `ubuntu-latest` でそのまま動く。
+`LLM_API_KEY`（GLM/bigmodel.cnのAPIキー）の Secret だけ登録すれば動く。
+Redditアクセスはブロックされていないので通常の `ubuntu-latest` でそのまま動く。
 
 - **GitHub 上で**: Actions → **check-llm** → *Run workflow*
   （`.github/workflows/check-llm.yml`）。

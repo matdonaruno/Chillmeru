@@ -3,7 +3,7 @@
 //
 // 必要な環境変数（GitHub Secrets）:
 //   REDDIT_USER_AGENT      （認証なしの公開JSONエンドポイントを使うため、これだけでOK）
-//   LLM_API_KEY            （Gemini）
+//   LLM_API_KEY            （GLM/bigmodel.cn）
 //   TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID
 //
 // ※ RedditのAPIは非商用・低頻度なら無料枠で足りるが、着手前に現行の規約・レート制限を要確認。
