@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import VoiceCard from "../components/VoiceCard.astro";
 import JobCard from "../components/JobCard.astro";
 import Icon from "../components/Icon.astro";
@@ -6,11 +7,27 @@ import { TOPICS, TOPIC_LABELS, TOPIC_ICONS } from "../../lib/taxonomy.mjs";
 import voices from "../../data/us/voices.json";
 import jobs from "../../data/us/jobs.json";
 import meta from "../../data/meta.json";
+import bg01 from "../assets/bg/bg-01.jpg";
+import bg02 from "../assets/bg/bg-02.jpg";
+import bg03 from "../assets/bg/bg-03.jpg";
+import bg04 from "../assets/bg/bg-04.jpg";
+import bg05 from "../assets/bg/bg-05.jpg";
+import bg06 from "../assets/bg/bg-06.jpg";
+import bg07 from "../assets/bg/bg-07.jpg";
+import bg08 from "../assets/bg/bg-08.jpg";
 
 // ビルド時に data/*.json を読み込む純粋な静的サイト（SSG）。
 // 新しい順に並べる（fetch-voices.mjs 側でも並べているが、フロントでも保証しておく）。
 const items = [...voices].sort((a, b) => b.created_utc - a.created_utc);
 const jobItems = [...jobs].sort((a, b) => new Date(b.created_utc) - new Date(a.created_utc));
+
+// 背景に薄く敷いてランダムに切り替える写真。低opacity・ぼかし表示なので
+// 軽量サイズで十分（900px幅・webp・quality低めに落として書き出す）。
+const bgPhotos = await Promise.all(
+  [bg01, bg02, bg03, bg04, bg05, bg06, bg07, bg08].map((src) =>
+    getImage({ src, width: 900, format: "webp", quality: 55 })
+  )
+);
 
 // 実際に出現する topic だけタブに出す（空タブを作らない）
 const usedTopics = TOPICS.filter((t) => items.some((v) => v.topic === t));
@@ -37,6 +54,13 @@ const updated = meta?.updated_at
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E" />
   </head>
   <body>
+    <div class="bg-photos" aria-hidden="true">
+      {
+        bgPhotos.map((p, i) => (
+          <div class="bg-photo" style={`background-image:url(${p.src})`} data-index={i} />
+        ))
+      }
+    </div>
     <div class="app">
       <header class="topbar">
         <div class="brand">
@@ -134,6 +158,27 @@ const updated = meta?.updated_at
           });
         });
       });
+
+      // 背景写真をシャッフルしてランダムな順に1枚ずつフェード表示
+      const bgPhotos = document.querySelectorAll<HTMLDivElement>(".bg-photo");
+      if (bgPhotos.length) {
+        const order = Array.from(bgPhotos, (_, i) => i);
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [order[i], order[j]] = [order[j], order[i]];
+        }
+        let pos = 0;
+        bgPhotos[order[0]].classList.add("is-active");
+
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!prefersReducedMotion) {
+          setInterval(() => {
+            bgPhotos[order[pos]].classList.remove("is-active");
+            pos = (pos + 1) % order.length;
+            bgPhotos[order[pos]].classList.add("is-active");
+          }, 9000);
+        }
+      }
     </script>
 
     <style is:global>
@@ -164,6 +209,28 @@ const updated = meta?.updated_at
         -webkit-font-smoothing: antialiased;
         background:
           linear-gradient(165deg, #08131a 0%, #0a1a1e 45%, #071016 100%) fixed;
+      }
+
+      /* 背景：写真をランダムに1枚ずつ薄く表示（下記スクリプトでフェード切り替え） */
+      .bg-photos {
+        position: fixed;
+        inset: 0;
+        z-index: -3;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .bg-photo {
+        position: absolute;
+        inset: -2%;
+        background-size: cover;
+        background-position: center;
+        filter: grayscale(35%) blur(1.5px);
+        opacity: 0;
+        transition: opacity 2.4s ease;
+      }
+      .bg-photo.is-active { opacity: 0.14; }
+      @media (prefers-reduced-motion: reduce) {
+        .bg-photo { transition: none; }
       }
 
       /* 背景：柔らかい光（検査室の照明・試薬の色みを抽象化） */
