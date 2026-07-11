@@ -38,8 +38,10 @@ export interface Job {
   url: string;
   /** 日本語の見出し（職種名の意訳） */
   title_ja: string;
-  /** 日本語要約 1〜2文。Adzunaの抜粋(description)をもとにした意訳、転載ではない */
-  summary_ja: string;
+  /** 業務内容の説明（1〜2文）。Adzunaの抜粋(description)をもとにした意訳、転載ではない */
+  content_ja: string;
+  /** 必要資格・経験、待遇面の一言（1文程度） */
+  qualification_ja: string;
   /** 求人企業名（Adzunaレスポンスそのまま。個人情報ではなく公開求人情報） */
   company: string;
   /** 勤務地表示名 */

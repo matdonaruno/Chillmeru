@@ -365,6 +365,7 @@ const updated = meta?.updated_at
         color: var(--ink-soft);
         font-size: 0.95rem;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        white-space: pre-line;
       }
 
       .resonance {
@@ -383,19 +384,38 @@ const updated = meta?.updated_at
       .resonance-aruaru { color: var(--aru); }
       .resonance-moyamoya { color: var(--moya); }
 
-      /* 求人カード */
-      .salary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.32rem;
-        margin-top: 0.7rem;
-        font-size: 0.86rem;
+      /* 求人カード：内容／報酬／資格のラベル付きスペック表示 */
+      .job-spec {
+        margin: 0.6rem 0 0;
+        padding: 0;
+      }
+      .spec-row {
+        display: flex;
+        gap: 0.7rem;
+        padding: 0.45rem 0;
+        border-top: 1px solid var(--hair);
+      }
+      .spec-row:first-child { border-top: none; padding-top: 0.2rem; }
+      .spec-row dt {
+        flex: 0 0 auto;
+        width: 2.6rem;
+        margin: 0.1rem 0 0;
+        font-size: 0.76rem;
         font-weight: 700;
         color: var(--accent);
-        padding: 0.26rem 0.66rem;
-        border-radius: 999px;
-        background: color-mix(in srgb, var(--accent) 14%, transparent);
-        border: 1px solid var(--hair);
+      }
+      .spec-row dd {
+        margin: 0;
+        flex: 1 1 auto;
+        color: var(--ink-soft);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+      .spec-row dd .spec-icon {
+        width: 0.95em;
+        height: 0.95em;
+        vertical-align: -0.12em;
+        color: var(--accent);
       }
       .job-post .actions { justify-content: flex-end; }
 

@@ -40,14 +40,23 @@ const when = relativeTime(job.created_utc);
   </div>
 
   <h2 class="title">{job.title_ja}</h2>
-  <p class="summary">{job.summary_ja}</p>
 
-  {salary && (
-    <div class="salary">
-      <Icon name="banknote" class="r-icon" />
-      {salary}
+  <dl class="job-spec">
+    <div class="spec-row">
+      <dt>内容</dt>
+      <dd>{job.content_ja}</dd>
     </div>
-  )}
+    {salary && (
+      <div class="spec-row">
+        <dt>報酬</dt>
+        <dd><Icon name="banknote" class="spec-icon" /> {salary}</dd>
+      </div>
+    )}
+    <div class="spec-row">
+      <dt>資格</dt>
+      <dd>{job.qualification_ja}</dd>
+    </div>
+  </dl>
 
   <div class="actions">
     <a class="source-link" href={job.url} target="_blank" rel="noopener noreferrer">
