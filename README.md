@@ -25,7 +25,9 @@
   データ更新のたびにNetlifyの1デプロイ15クレジットを消費したくないための構成で、
   `netlify.toml` の `ignore` ルールにより `data/` だけの変更ではデプロイ自体がスキップされる
   （コード変更時のみ通常通りデプロイ）。
-  「現場の声」「求人」をタブで切り替え表示（topicタブ + resonanceバッジ / 給与レンジバッジ）。
+  「現場の声」「求人」をタブで切り替え表示（topicタブ + resonanceバッジ / 給与レンジバッジ / 発信元の国旗ピル）。
+  Web Share API（非対応環境はクリップボードコピーにフォールバック）の共有ボタン、
+  `@astrojs/sitemap` によるsitemap・`robots.txt`・OGP/Twitter Card・WebSiteのJSON-LDも実装済み。
   `npm run build` で `dist/` に出力し、Netlify の無料枠にそのまま載る
   （`netlify.toml` 同梱、`chillmeru.netlify.app` 等のサブドメイン運用）
 
@@ -40,6 +42,54 @@
 - `resonance`（どう刺さるか）: aruaru（あるある）/ moyamoya（もやもや）/ null
 - resonanceが立つほど「共感」寄り、topicがcertification・career寄りほど「制度・教育」寄り。
   投稿の反応がどちらに寄るかの計測軸そのものになる。
+
+### `origin_country`（投稿者の発信元国）
+ISO 3166-1 alpha-2小文字（例: `"us"`, `"ng"`）。`data/us/`のような
+サイト区分としての「国」（`voicesPath(country)`）とは別概念で、投稿者個人の
+所在国を指す。日本語要約だけだと「海外の声」という新鮮さが失われるため、
+フロント（`src/scripts/feed.client.mjs`）が国旗＋プラットフォーム名（Reddit/X）の
+ピルをカードに描画するのに使う。自動パイプラインは`r/medlabprofessionals`が
+米国中心のため常に`"us"`を刻む。手動投入時は投稿者のプロフィール等から推定し、
+不明なら`"us"`にフォールバックする。
+
+## 使い方（日常運用）
+
+### 「現場の声」を増やす
+
+3つの経路がある。
+
+1. **自動（Reddit）**: `r/medlabprofessionals`の新着投稿をGitHub Actionsが自動取得・要約
+   （`daily.yml`）。ただしReddit公式Data APIの承認が下りるまでは`.json`エンドポイントが
+   ブロックされているため停止中（詳細は下記「Reddit」の注意書き参照）。
+2. **手動（Reddit / LinkedIn）**: 投稿本文＋URLをClaude Codeとのチャットに直接貼り付ける。
+   `lib/llm.mjs`の`summarizePost()`と同じ制約（title_ja ~20字、summary_ja 2-3文、
+   topic/resonanceはtaxonomy準拠、原文はそのまま転載しない）で要約してもらい、
+   `data/us/voices.json`に反映する。（`data/inbox/`+`node scripts/process-inbox.mjs`という
+   コピペ→スクリプト実行の経路も残っているが、LLM APIコストの節約のため現在は
+   チャット内で直接要約する運用が主）
+3. **手動（X/Twitter）**: Claude Codeに「Xの投稿探して」のように頼むと
+   `find-voices` Skill（`.claude/skills/find-voices/SKILL.md`）が起動し、ブラウザで
+   Xを検索・求人スパムや宣伝投稿を除外・要約までを一通り行う。LinkedIn同様、
+   Xも認証なしの公開JSONエンドポイントが無く自動収集はできないため、この
+   ブラウザ経由の手動投入が唯一の手段。
+
+いずれの経路でも、要約後は`npm run build`で疎通確認 → 要約内容をレビュー →
+`git commit` / `git push`（明示的に指示してから）という流れで進める。
+
+### 求人を更新する
+
+`node scripts/fetch-jobs.mjs`（Adzuna API、`ADZUNA_APP_ID`/`ADZUNA_APP_KEY`が必要）。
+GitHub Actionsの`daily-jobs.yml`から`workflow_dispatch`で手動実行もできる。
+
+### データを更新してもNetlifyの再デプロイは走らない
+
+`data/*.json`をpushしても、Netlifyの本番デプロイは走らない
+（`netlify.toml`の`ignore`ルールで`data/`だけの変更はスキップされる）。
+フロントは`src/scripts/feed.client.mjs`がGitHubの`main`ブランチから実行時に
+fetchする構成のため、pushしてから数分（raw.githubusercontent.comのキャッシュ）で
+サイトに反映される。**コード（`src/`・`lib/`・設定ファイル等）を変更したときだけ**、
+通常通りNetlifyが再ビルド・再デプロイする（1回15クレジット消費、月300クレジットの
+共有枠を他サイトとも分け合っているため頻度に注意）。
 
 ## セットアップ
 
@@ -107,8 +157,9 @@ ADZUNA_APP_KEY
    （このブロックは無認証パス側の挙動と推定されるため）。
    承認が来たら `lib/reddit.mjs` をOAuth実装に戻す（過去のコミット参照）。
 
-承認待ちの間は、Reddit以外の各連携（下記）とフロントエンドを
-seedデータ（`data/us/voices.json` のサンプル2件）で進められる。
+承認待ちの間は、Reddit以外の各連携（下記）とフロントエンドの検証・開発を進められる。
+`data/us/voices.json` には現在、上記「使い方（日常運用）」の手動投入経路で
+追加してきた実データが入っている（自動パイプライン停止中でも空にはならない）。
 
 #### つなぎ: 手動投入（`scripts/process-inbox.mjs`）
 
@@ -184,8 +235,11 @@ node scripts/fetch-jobs.mjs     # 求人（Adzuna）
    なのでそのまま **Deploy** でよい
 4. 初回デプロイ後、`<サイト名>.netlify.app` のURLが発行される
    （`chillmeru.netlify.app` を希望する場合は Site settings → Change site name）
-5. `data/*.json` が更新されるたび（`daily.yml` のコミット時）に自動で再ビルド・再デプロイされる
-   （Netlifyはpushをトリガーに自動ビルドする）
+5. コード（`src/`・`lib/`・設定ファイル等）を変更してpushしたときだけ自動で
+   再ビルド・再デプロイされる。`data/*.json` だけの変更（自動パイプライン・
+   手動投入コミット）は `netlify.toml` の `ignore` ルールでビルド自体がスキップされる
+   （データはフロントが実行時にGitHub `main` からfetchするため再デプロイ不要。
+   詳しくは上記「使い方（日常運用）」参照）。
 
 ## 投稿フロー（MVP）
 
