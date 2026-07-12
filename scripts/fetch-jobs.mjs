@@ -3,7 +3,7 @@
 //
 // 必要な環境変数（GitHub Secrets）:
 //   ADZUNA_APP_ID / ADZUNA_APP_KEY （https://developer.adzuna.com/signup で登録）
-//   LLM_API_KEY                    （Gemini）
+//   LLM_API_KEY                    （GLM/bigmodel.cn）
 //
 // ※ Adzuna利用規約: 個別求人への恒久リンクの表示のみ許可。求人数・平均給与などの
 //    集計を継続的に表示するには書面の許可が必要なため、本スクリプトは集計を行わない。
@@ -35,7 +35,8 @@ async function main() {
       id: j.id,
       url: j.url,
       title_ja: s.title_ja,
-      summary_ja: s.summary_ja,
+      content_ja: s.content_ja,
+      qualification_ja: s.qualification_ja,
       company: j.company,
       location: j.location,
       salary_min: j.salary_min,

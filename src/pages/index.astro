@@ -1,23 +1,40 @@
 ---
-import VoiceCard from "../components/VoiceCard.astro";
-import JobCard from "../components/JobCard.astro";
+import { getImage } from "astro:assets";
 import Icon from "../components/Icon.astro";
-import { TOPICS, TOPIC_LABELS, TOPIC_ICONS } from "../../lib/taxonomy.mjs";
-import voices from "../../data/us/voices.json";
-import jobs from "../../data/us/jobs.json";
-import meta from "../../data/meta.json";
+import bg01 from "../assets/bg/bg-01.jpg";
+import bg02 from "../assets/bg/bg-02.jpg";
+import bg03 from "../assets/bg/bg-03.jpg";
+import bg04 from "../assets/bg/bg-04.jpg";
+import bg05 from "../assets/bg/bg-05.jpg";
+import bg06 from "../assets/bg/bg-06.jpg";
+import bg07 from "../assets/bg/bg-07.jpg";
+import bg08 from "../assets/bg/bg-08.jpg";
 
-// ビルド時に data/*.json を読み込む純粋な静的サイト（SSG）。
-// 新しい順に並べる（fetch-voices.mjs 側でも並べているが、フロントでも保証しておく）。
-const items = [...voices].sort((a, b) => b.created_utc - a.created_utc);
-const jobItems = [...jobs].sort((a, b) => new Date(b.created_utc) - new Date(a.created_utc));
+// 「現場の声」「求人」は data/*.json をビルド時に import せず、クライアント側で
+// GitHub main ブランチから直接 fetch する（src/scripts/feed.client.mjs）。
+// データ更新のたびにNetlifyを再デプロイ（15クレジット消費）したくないため。
 
-// 実際に出現する topic だけタブに出す（空タブを作らない）
-const usedTopics = TOPICS.filter((t) => items.some((v) => v.topic === t));
+// 背景に薄く敷いてランダムに切り替える写真。低opacity・ぼかし表示なので
+// 軽量サイズで十分（900px幅・webp・quality低めに落として書き出す）。
+const bgPhotos = await Promise.all(
+  [bg01, bg02, bg03, bg04, bg05, bg06, bg07, bg08].map((src) =>
+    getImage({ src, width: 900, format: "webp", quality: 55 })
+  )
+);
 
-const updated = meta?.updated_at
-  ? new Date(meta.updated_at).toLocaleDateString("ja-JP", { month: "long", day: "numeric" })
-  : null;
+// OGP/Twitter Card用のシェア画像（スプラッシュと同じ写真を使い回す）
+const ogImage = await getImage({ src: bg08, width: 1200, format: "jpg", quality: 70 });
+const ogImageUrl = new URL(ogImage.src, Astro.site).toString();
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Chillmeru（チルメル）",
+  url: canonicalUrl,
+  description: "海外の臨床検査技師の『現場の声』と『求人』を、日本語でサッと。読み取り専用・日次更新。",
+  inLanguage: "ja",
+};
 ---
 
 <!doctype html>
@@ -31,12 +48,41 @@ const updated = meta?.updated_at
       content="海外の臨床検査技師の『現場の声』を、日本語でサッと。読み取り専用・日次更新。"
     />
     <meta name="theme-color" content="#08131a" />
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content="Chillmeru（チルメル）" />
     <meta property="og:description" content="海外の臨床検査技師の『現場の声』を、日本語でサッと。" />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Chillmeru（チルメル）" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Chillmeru（チルメル）" />
+    <meta name="twitter:description" content="海外の臨床検査技師の『現場の声』を、日本語でサッと。" />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E" />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />
   </head>
   <body>
+    <div id="splash" class="splash" aria-hidden="true">
+      <div class="splash-bg" style={`background-image:url(${bgPhotos[7].src})`} />
+      <div class="splash-vignette" />
+      <div class="splash-letterbox splash-letterbox-top" />
+      <div class="splash-letterbox splash-letterbox-bottom" />
+      <div class="splash-content">
+        <Icon name="flask" class="splash-mark" stroke={2} />
+        <h1 class="splash-title">Chillmeru</h1>
+        <p class="splash-sub">チルメル</p>
+        <p class="splash-tagline">海外の検査技師のいま、日本語でサッと。</p>
+      </div>
+    </div>
+    <div class="bg-photos" aria-hidden="true">
+      {
+        bgPhotos.map((p, i) => (
+          <div class="bg-photo" style={`background-image:url(${p.src})`} data-index={i} />
+        ))
+      }
+    </div>
     <div class="app">
       <header class="topbar">
         <div class="brand">
@@ -44,7 +90,12 @@ const updated = meta?.updated_at
           <span class="name">Chillmeru</span>
           <span class="sub">チルメル</span>
         </div>
-        {updated && <span class="updated">{updated} 更新</span>}
+        <div class="topbar-actions">
+          <span class="updated" id="updated-badge" hidden></span>
+          <button class="icon-btn" id="share-btn" type="button" aria-label="このアプリを共有">
+            <Icon name="share" />
+          </button>
+        </div>
       </header>
 
       <p class="lead">海外の臨床検査技師の「現場の声」と「求人」を、日本語でサッと。</p>
@@ -59,39 +110,37 @@ const updated = meta?.updated_at
       </nav>
 
       <section id="view-voices" class="view">
-        <nav class="filters" aria-label="トピックで絞り込み">
+        <nav class="filters" id="voice-filters" aria-label="トピックで絞り込み">
           <button class="chip is-active" data-filter="all" type="button">すべて</button>
-          {
-            usedTopics.map((t) => (
-              <button class="chip" data-filter={t} type="button">
-                <Icon name={TOPIC_ICONS[t]} class="chip-icon" />
-                {TOPIC_LABELS[t]}
-              </button>
-            ))
-          }
         </nav>
 
-        {
-          items.length === 0 ? (
-            <p class="empty">まだ声がありません。日次パイプラインが動くと、ここに並びます。</p>
-          ) : (
-            <main class="feed">
-              {items.map((v) => <VoiceCard voice={v} />)}
-            </main>
-          )
-        }
+        <div id="voices-container">
+          <div class="feed skeleton" aria-hidden="true" aria-label="読み込み中">
+            {Array.from({ length: 3 }).map(() => (
+              <div class="post skeleton-card">
+                <div class="skeleton-line skeleton-line--meta" />
+                <div class="skeleton-line skeleton-line--title" />
+                <div class="skeleton-line skeleton-line--body" />
+                <div class="skeleton-line skeleton-line--body short" />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section id="view-jobs" class="view" hidden>
-        {
-          jobItems.length === 0 ? (
-            <p class="empty">まだ求人がありません。日次パイプラインが動くと、ここに並びます。</p>
-          ) : (
-            <main class="feed">
-              {jobItems.map((j) => <JobCard job={j} />)}
-            </main>
-          )
-        }
+        <div id="jobs-container">
+          <div class="feed skeleton" aria-hidden="true" aria-label="読み込み中">
+            {Array.from({ length: 3 }).map(() => (
+              <div class="post skeleton-card">
+                <div class="skeleton-line skeleton-line--meta" />
+                <div class="skeleton-line skeleton-line--title" />
+                <div class="skeleton-line skeleton-line--body" />
+                <div class="skeleton-line skeleton-line--body short" />
+              </div>
+            ))}
+          </div>
+        </div>
         <p class="attribution">
           求人情報は <a href="https://www.adzuna.com/" target="_blank" rel="noopener noreferrer">Adzuna</a> の提供です。
           給与レンジは各求人ページの掲載情報に基づきます。
@@ -105,6 +154,8 @@ const updated = meta?.updated_at
     </div>
 
     <script>
+      import { initFeed } from "../scripts/feed.client.mjs";
+
       // 表示切り替え（現場の声 / 求人）
       const viewTabs = document.querySelectorAll<HTMLButtonElement>(".view-tab");
       const views = {
@@ -121,19 +172,71 @@ const updated = meta?.updated_at
         });
       });
 
-      // トピックチップでのフィルタ（現場の声のみ、フレームワーク不要の素のJS）
-      const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
-      const posts = document.querySelectorAll<HTMLElement>("#view-voices .post");
-      chips.forEach((chip) => {
-        chip.addEventListener("click", () => {
-          const filter = chip.dataset.filter;
-          chips.forEach((c) => c.classList.toggle("is-active", c === chip));
-          posts.forEach((post) => {
-            const show = filter === "all" || post.dataset.topic === filter;
-            post.style.display = show ? "" : "none";
-          });
-        });
+      // 「現場の声」「求人」フィードは data/*.json をランタイムfetchして描画する
+      // （トピックチップのフィルタ配線もこの中で行う）
+      initFeed();
+
+      // 共有ボタン：対応端末はネイティブの共有シートを出し、非対応（主にデスクトップ）は
+      // URLをクリップボードにコピーしてアイコンで一瞬フィードバックする。
+      const shareBtn = document.getElementById("share-btn");
+      shareBtn?.addEventListener("click", async () => {
+        const shareData = {
+          title: "Chillmeru（チルメル）",
+          text: "海外の臨床検査技師の「現場の声」と「求人」を、日本語でサッと。",
+          url: location.href,
+        };
+        try {
+          if (navigator.share) {
+            await navigator.share(shareData);
+            return;
+          }
+          await navigator.clipboard.writeText(shareData.url);
+          shareBtn.classList.add("is-copied");
+          shareBtn.setAttribute("aria-label", "リンクをコピーしました");
+          setTimeout(() => {
+            shareBtn.classList.remove("is-copied");
+            shareBtn.setAttribute("aria-label", "このアプリを共有");
+          }, 1600);
+        } catch (err) {
+          if (err instanceof Error && err.name !== "AbortError") console.error("[Chillmeru] 共有に失敗しました", err);
+        }
       });
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // スプラッシュ：タブを開いている間の初回アクセス時だけ、短いシネマティック演出を見せる
+      const splash = document.getElementById("splash");
+      if (splash) {
+        if (sessionStorage.getItem("chillmeru_splash_seen")) {
+          splash.remove();
+        } else {
+          sessionStorage.setItem("chillmeru_splash_seen", "1");
+          setTimeout(() => {
+            splash.classList.add("is-hidden");
+            splash.addEventListener("transitionend", () => splash.remove(), { once: true });
+          }, prefersReducedMotion ? 200 : 2500);
+        }
+      }
+
+      // 背景写真をシャッフルしてランダムな順に1枚ずつフェード表示
+      const bgPhotos = document.querySelectorAll<HTMLDivElement>(".bg-photo");
+      if (bgPhotos.length) {
+        const order = Array.from(bgPhotos, (_, i) => i);
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [order[i], order[j]] = [order[j], order[i]];
+        }
+        let pos = 0;
+        bgPhotos[order[0]].classList.add("is-active");
+
+        if (!prefersReducedMotion) {
+          setInterval(() => {
+            bgPhotos[order[pos]].classList.remove("is-active");
+            pos = (pos + 1) % order.length;
+            bgPhotos[order[pos]].classList.add("is-active");
+          }, 9000);
+        }
+      }
     </script>
 
     <style is:global>
@@ -166,6 +269,138 @@ const updated = meta?.updated_at
           linear-gradient(165deg, #08131a 0%, #0a1a1e 45%, #071016 100%) fixed;
       }
 
+      /* 背景：写真をランダムに1枚ずつ薄く表示（下記スクリプトでフェード切り替え） */
+      .bg-photos {
+        position: fixed;
+        inset: 0;
+        z-index: -3;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .bg-photo {
+        position: absolute;
+        inset: -2%;
+        background-size: cover;
+        background-position: center;
+        filter: grayscale(35%) blur(1.5px);
+        opacity: 0;
+        transition: opacity 2.4s ease;
+      }
+      .bg-photo.is-active { opacity: 0.14; }
+      @media (prefers-reduced-motion: reduce) {
+        .bg-photo { transition: none; }
+      }
+
+      /* スプラッシュ：初回アクセス時だけ見せる短いシネマティック演出 */
+      .splash {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #04090c;
+        transition: opacity 0.7s ease, visibility 0.7s ease;
+      }
+      .splash.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .splash-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.5) saturate(1.15);
+        animation: splash-zoom 2.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+      }
+      .splash-vignette {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(120% 90% at 50% 55%, transparent 30%, rgba(4, 9, 12, 0.88) 100%),
+          linear-gradient(180deg, rgba(4, 9, 12, 0.55), rgba(4, 9, 12, 0.35) 40%, rgba(4, 9, 12, 0.75));
+      }
+      .splash-letterbox {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 10%;
+        background: #030608;
+        transform: scaleY(0);
+        animation: splash-bar-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+      .splash-letterbox-top { top: 0; transform-origin: top; }
+      .splash-letterbox-bottom { bottom: 0; transform-origin: bottom; }
+      .splash-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.55rem;
+        width: min(90vw, 480px);
+        padding: 0 1rem;
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+        animation: splash-title-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s forwards;
+      }
+      .splash-mark {
+        width: 2.6rem;
+        height: 2.6rem;
+        color: var(--accent);
+        filter: drop-shadow(0 6px 20px rgba(86, 212, 196, 0.55));
+        margin-bottom: 0.2rem;
+      }
+      .splash-title {
+        margin: 0;
+        font-size: 1.9rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        color: var(--ink);
+        text-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
+      }
+      .splash-sub {
+        margin: 0;
+        padding-left: 0.5em;
+        font-size: 0.8rem;
+        letter-spacing: 0.5em;
+        color: var(--ink-faint);
+      }
+      .splash-tagline {
+        margin: 0.9rem 0 0;
+        max-width: 100%;
+        font-size: 1.15rem;
+        font-weight: 600;
+        line-height: 1.6;
+        text-align: center;
+        text-wrap: balance;
+        color: var(--ink-soft);
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        transform: translateY(8px);
+        animation: splash-title-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.9s forwards;
+      }
+      @keyframes splash-zoom {
+        from { transform: scale(1); }
+        to { transform: scale(1.1); }
+      }
+      @keyframes splash-bar-in {
+        to { transform: scaleY(1); }
+      }
+      @keyframes splash-title-in {
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .splash { transition: none; }
+        .splash-bg { animation: none; }
+        .splash-letterbox { animation: none; transform: scaleY(1); }
+        .splash-content { animation: none; opacity: 1; transform: none; }
+        .splash-tagline { animation: none; opacity: 1; transform: none; }
+      }
+
       /* 背景：柔らかい光（検査室の照明・試薬の色みを抽象化） */
       body::before {
         content: "";
@@ -179,7 +414,7 @@ const updated = meta?.updated_at
         filter: blur(6px);
         pointer-events: none;
       }
-      /* 背景：分子構造パターンをうっすら + ブラー */
+      /* 背景：分子構造パターン（線画）。非表示にしてみる */
       body::after {
         content: "";
         position: fixed;
@@ -189,6 +424,7 @@ const updated = meta?.updated_at
         opacity: 0.22;
         filter: blur(1.2px);
         pointer-events: none;
+        display: none;
       }
 
       .app {
@@ -224,7 +460,25 @@ const updated = meta?.updated_at
         text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
       }
       .brand .sub { font-size: 0.72rem; color: var(--ink-faint); }
+      .topbar-actions { display: flex; align-items: center; gap: 0.6rem; }
       .updated { font-size: 0.72rem; color: var(--ink-faint); white-space: nowrap; }
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        appearance: none;
+        border: 1px solid var(--hair);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--ink-soft);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .icon-btn svg { width: 1rem; height: 1rem; }
+      .icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+      .icon-btn.is-copied { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
 
       .lead {
         margin: 0;
@@ -305,8 +559,40 @@ const updated = meta?.updated_at
         font-weight: 700;
       }
 
-      /* フィード（グラスカード） */
-      .feed { display: flex; flex-direction: column; gap: 0.8rem; padding: 0.9rem; }
+      /* フィード（グラスカード）。リロード時に読み込み中の状態がちらつかないよう、
+         スケルトン→実データどちらの差し込みでもふわっと表示する。 */
+      .feed {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0.9rem;
+        animation: feed-fade-in 0.35s ease;
+      }
+      @keyframes feed-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      /* 読み込み中のスケルトンカード */
+      .skeleton-card { display: flex; flex-direction: column; gap: 0.55rem; }
+      .skeleton-line {
+        height: 0.85rem;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.09);
+        animation: skeleton-pulse 1.4s ease-in-out infinite;
+      }
+      .skeleton-line--meta { width: 35%; height: 0.65rem; }
+      .skeleton-line--title { width: 70%; height: 1.05rem; margin-top: 0.25rem; }
+      .skeleton-line--body { width: 100%; }
+      .skeleton-line--body.short { width: 55%; }
+      @keyframes skeleton-pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .feed { animation: none; }
+        .skeleton-line { animation: none; opacity: 0.7; }
+      }
 
       .post {
         background: var(--glass);
@@ -336,6 +622,20 @@ const updated = meta?.updated_at
       }
       .meta .source { color: var(--ink-soft); font-weight: 700; }
       .meta .dot { opacity: 0.6; }
+      /* 発信元プラットフォーム＋国旗のピル。日本語要約だけだと国内投稿に見えてしまう
+         ので、海外発の声だと一目で分かるようにする。 */
+      .origin-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 0.14rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(90, 162, 255, 0.14);
+        border: 1px solid rgba(90, 162, 255, 0.35);
+        color: var(--ink-soft);
+      }
       .topic-tag {
         display: inline-flex;
         align-items: center;
@@ -365,6 +665,7 @@ const updated = meta?.updated_at
         color: var(--ink-soft);
         font-size: 0.95rem;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        white-space: pre-line;
       }
 
       .resonance {
@@ -383,19 +684,38 @@ const updated = meta?.updated_at
       .resonance-aruaru { color: var(--aru); }
       .resonance-moyamoya { color: var(--moya); }
 
-      /* 求人カード */
-      .salary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.32rem;
-        margin-top: 0.7rem;
-        font-size: 0.86rem;
+      /* 求人カード：内容／報酬／資格のラベル付きスペック表示 */
+      .job-spec {
+        margin: 0.6rem 0 0;
+        padding: 0;
+      }
+      .spec-row {
+        display: flex;
+        gap: 0.7rem;
+        padding: 0.45rem 0;
+        border-top: 1px solid var(--hair);
+      }
+      .spec-row:first-child { border-top: none; padding-top: 0.2rem; }
+      .spec-row dt {
+        flex: 0 0 auto;
+        width: 2.6rem;
+        margin: 0.1rem 0 0;
+        font-size: 0.76rem;
         font-weight: 700;
         color: var(--accent);
-        padding: 0.26rem 0.66rem;
-        border-radius: 999px;
-        background: color-mix(in srgb, var(--accent) 14%, transparent);
-        border: 1px solid var(--hair);
+      }
+      .spec-row dd {
+        margin: 0;
+        flex: 1 1 auto;
+        color: var(--ink-soft);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+      .spec-row dd .spec-icon {
+        width: 0.95em;
+        height: 0.95em;
+        vertical-align: -0.12em;
+        color: var(--accent);
       }
       .job-post .actions { justify-content: flex-end; }
 

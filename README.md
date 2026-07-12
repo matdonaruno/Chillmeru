@@ -19,7 +19,12 @@
   - Adzuna利用規約により、個別求人への恒久リンクのみ表示。求人数・平均給与などの
     **集計は行わない**（フロントにも実装しない）
 - **分類**: `lib/taxonomy.mjs`（唯一の正）／型は `lib/types.ts`
-- **フロント**: `src/pages/index.astro`（Astro、SSG）。`data/*.json` をビルド時に読み込み、
+- **フロント**: `src/pages/index.astro`（Astro、SSG）。ページ本体はビルド時に静的出力するが、
+  `data/*.json` はビルド時にimportせず、`src/scripts/feed.client.mjs` がブラウザから
+  GitHub `main` の生JSON（raw.githubusercontent.com）を直接fetchして描画する。
+  データ更新のたびにNetlifyの1デプロイ15クレジットを消費したくないための構成で、
+  `netlify.toml` の `ignore` ルールにより `data/` だけの変更ではデプロイ自体がスキップされる
+  （コード変更時のみ通常通りデプロイ）。
   「現場の声」「求人」をタブで切り替え表示（topicタブ + resonanceバッジ / 給与レンジバッジ）。
   `npm run build` で `dist/` に出力し、Netlify の無料枠にそのまま載る
   （`netlify.toml` 同梱、`chillmeru.netlify.app` 等のサブドメイン運用）
@@ -44,8 +49,9 @@
    セルフサーブ新規作成が実質ブロックされたための代替。非商用・低頻度なら
    無料枠で足りるが、**着手前に現行の規約・レート制限を確認**。将来レート制限や
    ブロックに当たった場合は Reddit の公式データAPI申請（非商用向け）に切り替える。
-2. LLMは **Gemini**（`gemini-3.5-flash`、構造化出力でJSONを直接強制）を使用。
-   [Google AI Studio](https://aistudio.google.com/apikey) でAPIキーを発行し `LLM_API_KEY` に設定。
+2. LLMは **GLM**（智譜AI/Zhipu AI、`glm-4.7-flash`、`response_format: json_object`でJSON強制）を使用。
+   2026-07-11にGemini（クォータ超過で `daily-jobs` が停止）から切替済み。
+   [bigmodel.cn](https://bigmodel.cn/) でAPIキーを発行し `LLM_API_KEY` に設定。
    別プロバイダに替えたい場合は `lib/llm.mjs` の `callLLM()` を差し替える。
 3. Telegram: BotFather でボットを作りトークン取得（ボット名も `chillmeru_bot` 等に揃えると統一感が出る）、自分の chat_id を控える。
 4. Adzuna（求人）: https://developer.adzuna.com/signup でメール登録すると
@@ -104,10 +110,30 @@ ADZUNA_APP_KEY
 承認待ちの間は、Reddit以外の各連携（下記）とフロントエンドを
 seedデータ（`data/us/voices.json` のサンプル2件）で進められる。
 
-### LLM（Gemini要約）
+#### つなぎ: 手動投入（`scripts/process-inbox.mjs`）
 
-`LLM_API_KEY` の Secret だけ登録すれば動く。Redditアクセスはブロックされていないので
-通常の `ubuntu-latest` でそのまま動く。
+承認が来るまでの間、ブラウザで手動でReddit投稿を読んで日本語要約を
+反映させる手段。`data/inbox/voices.txt` にコピペで貯めて実行すると、
+自動取得パイプラインと同じLLM要約・スキーマで `data/us/voices.json` に
+追記される。
+
+```
+LLM_API_KEY=... node scripts/process-inbox.mjs
+```
+
+- `data/inbox/voices.txt` は **git管理していない**（`.gitignore`）。
+  原文を一時的にでもリポジトリ（public）に残さないため。要約後の
+  JSON（`data/us/voices.json`）だけがcommit対象になる。
+- 実行すると要約結果がターミナルに表示されるので、そこで内容を確認できる。
+- 実行後、inboxは自動でテンプレートに戻る（次のコピペに備える）。
+- 既出URL（`/comments/<id>/` から復元したidが一致）は自動でスキップされる。
+- フォーマットはinboxファイル自体にコメントとして書いてある
+  （`URL:` / `TITLE:` / `SCORE:` / `COMMENTS:`(省略可) / `BODY:`）。
+
+### LLM（GLM要約）
+
+`LLM_API_KEY`（GLM/bigmodel.cnのAPIキー）の Secret だけ登録すれば動く。
+Redditアクセスはブロックされていないので通常の `ubuntu-latest` でそのまま動く。
 
 - **GitHub 上で**: Actions → **check-llm** → *Run workflow*
   （`.github/workflows/check-llm.yml`）。

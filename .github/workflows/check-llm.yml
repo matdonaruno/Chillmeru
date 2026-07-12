@@ -1,7 +1,7 @@
 name: check-llm
 
 # LLM要約だけを単体で確認する手動ワークフロー。Reddit/Telegramは不要。
-# LLM_API_KEY だけ登録すれば動く。Geminiへのアクセスはブロックされていないので
+# LLM_API_KEY だけ登録すれば動く。GLM(bigmodel.cn)へのアクセスはブロックされていないので
 # 通常の ubuntu-latest ランナーで動く（check-reddit と違い self-hosted 不要）。
 
 on:

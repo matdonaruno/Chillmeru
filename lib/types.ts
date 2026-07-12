@@ -9,6 +9,14 @@ export interface Voice {
   id: string;
   /** 元投稿への恒久リンク。必ず原典に敬意とトラフィックを返す */
   url: string;
+  /**
+   * 投稿者の発信元国（ISO 3166-1 alpha-2、小文字。例: "us", "ng"）。
+   * フロントでプラットフォーム＋国旗のピル表示に使う。日本語要約だけだと
+   * 「海外の声」という新鮮さが失われるための視覚的な手がかり。
+   * `voicesPath(country)`の`country`（data/us/等のサイト区分）とは別概念で、
+   * 投稿者個人の所在国を指す。判断できない場合は "us"（サイトの主対象）にフォールバック。
+   */
+  origin_country: string;
   /** 日本語の見出し（要約の一行版） */
   title_ja: string;
   /** 日本語要約 2〜3文。サッと見れる製品意図 兼 変形的利用の安全マージン */
@@ -38,8 +46,10 @@ export interface Job {
   url: string;
   /** 日本語の見出し（職種名の意訳） */
   title_ja: string;
-  /** 日本語要約 1〜2文。Adzunaの抜粋(description)をもとにした意訳、転載ではない */
-  summary_ja: string;
+  /** 業務内容の説明（1〜2文）。Adzunaの抜粋(description)をもとにした意訳、転載ではない */
+  content_ja: string;
+  /** 必要資格・経験、待遇面の一言（1文程度） */
+  qualification_ja: string;
   /** 求人企業名（Adzunaレスポンスそのまま。個人情報ではなく公開求人情報） */
   company: string;
   /** 勤務地表示名 */

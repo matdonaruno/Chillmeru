@@ -5,3 +5,10 @@ dist/
 .next/
 .astro/
 .claude/settings.local.json
+
+# 手動投入用のコピペ置き場。原文を一時的にでもリポジトリに残さないため（README/CLAUDE.md参照）
+data/inbox/
+
+# self-hosted runner一式。.credentials/.credentials_rsaparams/.runnerに登録トークン等が
+# 入っているため、絶対にcommitしない（git add -A等での巻き込み事故防止）
+actions-runner/
