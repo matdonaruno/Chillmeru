@@ -1,7 +1,34 @@
 [
   {
+    "id": "x_2050615200970158486",
+    "url": "https://x.com/Olamilekan1404/status/2050615200970158486",
+    "origin_country": "ng",
+    "title_ja": "喀痰ください、唾持ってきました",
+    "summary_ja": "喀痰検体をお願いしたら、患者が唾液を持ってきたというMLSあるあるのジョーク投稿。「では…」と絶句する反応に、検査技師仲間から共感の声が集まった。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 2,
+    "num_comments": 0,
+    "created_utc": 1777772100,
+    "fetched_at": "2026-07-11T22:34:12.000Z"
+  },
+  {
+    "id": "x_2040547234354540873",
+    "url": "https://x.com/RussellShaw_MLS/status/2040547234354540873",
+    "origin_country": "us",
+    "title_ja": "検査室は人手不足、管理部門だけ肥大化",
+    "summary_ja": "臨床判断の7割は検査データに基づくのに、検査部門は慢性的な人手不足・予算不足で経営陣から見えない存在のまま。一方で検体の請求コーディングを担う部門は、検査部長が何年も求めてきた増員をずっと得ており、管理部門が臨床部門より速いペースで膨張し続けていると指摘する。",
+    "topic": "workload",
+    "resonance": "moyamoya",
+    "score": 16,
+    "num_comments": 1,
+    "created_utc": 1775390400,
+    "fetched_at": "2026-07-11T22:34:12.000Z"
+  },
+  {
     "id": "reddit_t3_1uq7fcd",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uq7fcd/ok_guys_job_interview_incoming_with_10_years/",
+    "origin_country": "us",
     "title_ja": "10年目の給与交渉、いくら要求？",
     "summary_ja": "経験10年、時給31〜48ドルのレンジで臨む面接を前に、給与交渉の経験がなく、初めていくら要求すべきか分からずにいる。\n\nコメント欄の最多支持は『上限の48ドルを狙え』(70票)。一方で17年の経験で上限を求めたら『全国一律のレンジ表記で、実際の提示額は勤務州基準』と言われた苦い経験も共有され、レンジ自体があてにならないという声も相次いだ。",
     "topic": "salary",
@@ -14,6 +41,7 @@
   {
     "id": "reddit_t3_1uqfixf",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uqfixf/grateful/",
+    "origin_country": "us",
     "title_ja": "初月、血液学にやられたけど感謝",
     "summary_ja": "正式な検査技師としての初月が終わった。血液学に打ちのめされた一日だったが、この仕事に就けたことに心から感謝している。",
     "topic": "career",
@@ -26,6 +54,7 @@
   {
     "id": "reddit_t3_1up7n1z",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1up7n1z/as_difficult_as_first_year_med_school/",
+    "origin_country": "us",
     "title_ja": "MLSは医学部1年並みに辛い？",
     "summary_ja": "MLSの1年制大学院プログラムは医学部1年目と同じくらい大変だと聞いて、それが本当なのか大げさなのか不安が拭えない。\n\nコメント欄では歯ぎしりで奥歯を割った、ストレスで抜け毛が止まらなかったという体験談が並ぶ一方、『医学部の方が扱う内容ははるかに深く範囲も広い』『ただ短期間に詰め込む密度は互角』など、経験者からは一長一短という声が多かった。",
     "topic": "certification",
@@ -38,6 +67,7 @@
   {
     "id": "reddit_t3_1usoig8",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1usoig8/rejected_from_labcorp_is_the_job_market_in_los/",
+    "origin_country": "us",
     "title_ja": "LAの検査職市場、厳しすぎる？",
     "summary_ja": "臨床研究ラボで3年以上働いた後、CLSプログラム受験に向けて臨床検査職への転向を目指すも、エントリーレベルの夜勤枠を含め応募したほぼ全てで書類落ち、数少ない面接の一つだったLabcorpも不合格に終わり落胆している。\n\nコメント欄では『資格取得後に辞めそうな人材と見なされ敬遠された』『検査助手・採血枠は研究職からの転向組とも競合していて狭き門』といった分析が寄せられた。",
     "topic": "career",
@@ -50,6 +80,7 @@
   {
     "id": "reddit_t3_1urmihx",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1urmihx/medlab_career_change/",
+    "origin_country": "us",
     "title_ja": "研究職への夢とラボの現実の板挟み",
     "summary_ja": "病院検査室で8年、血液学や輸血、細胞・遺伝子治療に携わってきたが、今の仕事は単調で自動化されており、興味のある研究や批判的思考を発揮する余地がないと感じている。博士課程への憧れを何度も打ち消してきたが頭から離れず、社交的な性格や仕事以外の時間も大切にしたい自分がアカデミックな博士課程に向いているのか悩んでいる。\n\nコメント欄では『研究職から臨床へ移る人を最近よく見る、政権の研究予算削減の影響もあるのでは』という指摘があった。",
     "topic": "career",
@@ -62,6 +93,7 @@
   {
     "id": "reddit_t3_1uo207h",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uo207h/hows_medtech_life/",
+    "origin_country": "us",
     "title_ja": "医療技術者の生活、実際どう？",
     "summary_ja": "3年生になっても、この仕事を続ける価値があるのか、卒業後の生活は本当に良くなるのか、まだ確信が持てずにいる。\n\nコメント欄では『安定していて悪くない給料、満足度は同僚次第』『ニューヨークで年13万ドル、平日9時5時、40歳で引退目指せる』といった景気の良い話から、『給料は州によりけりだが最大の魅力は雇用の安定』という声まで幅広い実例が集まった。",
     "topic": "career",
@@ -74,6 +106,7 @@
   {
     "id": "reddit_t3_1uo0bzo",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uo0bzo/working_for_mgb_as_lab_professional/",
+    "origin_country": "us",
     "title_ja": "理不尽な上司に疲弊するMGBのラボ",
     "summary_ja": "マス・ジェネラル・ブリガム(MGB)系列のラボが、人員不足と理不尽な上司に疲弊している。看護師のストライキをきっかけに、技師側からも保身と組織への忠誠しか頭にない管理職への不満が噴き出した。\n\nコメント欄では技師の労働組合があるという珍しいラボの報告や、老朽化した機器と人手不足を抱えながらも組合のおかげで何とか回っているという声が続いた。",
     "topic": "workload",
@@ -86,6 +119,7 @@
   {
     "id": "reddit_t3_1ubab0v",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1ubab0v/a_patient_called_and_asked_for_me_by_name/",
+    "origin_country": "us",
     "title_ja": "患者からの名指し電話に涙",
     "summary_ja": "骨髄検査の際にたまたま患者と少し言葉を交わした技師が、後日その患者から名指しで電話を受けた。忙しいのに時間を割いて質問に答えてくれたこと、検査を任せられる安心感への感謝を伝えられ、電話を切った後に思わず涙腺が緩んだという。\n\nコメント欄では、緊張した若い患者に付き添って感謝された話や、通院のたびに指名してくれていた患者を看取った話など、同じように心を動かされた体験が続いた。",
     "topic": "culture",
@@ -98,6 +132,7 @@
   {
     "id": "reddit_t3_1urbusz",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1urbusz/whats_in_the_tube/",
+    "origin_country": "us",
     "title_ja": "リチウム入りチューブでリチウム検査？",
     "summary_ja": "精神科病棟からの検体、抗凝固剤にはリチウムが入っている。それでもリチウム値を測れと言う看護師に、誤った測定表を根拠に食い下がられたが、最終的には師長が仲裁して収まった。\n\n技師側には『こちらも専門教育を受けている』というもやもやが残る。",
     "topic": "culture",
@@ -110,6 +145,7 @@
   {
     "id": "reddit_t3_1upiaaa",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1upiaaa/i_severely_underestimated_mls_before_becoming_a/",
+    "origin_country": "us",
     "title_ja": "「本物の科学じゃない」と言われる悔しさ",
     "summary_ja": "化学者から検査技師に転向し、想像以上に高度な思考力と忍耐が要る仕事だと痛感している。他分野の研究者からは『本物の科学ではない』と見なされがちな現状がある。\n\nコメント欄では『縁の下の力持ちこそ検査技師』『トラブル続きの分析装置の方がよほど手強い』といった共感の声が相次いだ。",
     "topic": "culture",
@@ -122,6 +158,7 @@
   {
     "id": "reddit_t3_1uoj76i",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uoj76i/in_hospitals_where_there_are_no_overnight/",
+    "origin_country": "us",
     "title_ja": "採血も検査も夜勤ひとりで抱える限界",
     "summary_ja": "夜勤ラボが自分一人という病院で、本来の検査業務に加え全病棟の採血まで任され疲弊している。看護師側が対応を拒み、時には苛立って検体を投げつけられることもあるといい、精神的にも限界だと訴えている。\n\nコメント欄では『それは看護師の仕事』という声が大多数を占めた。",
     "topic": "workload",
@@ -134,6 +171,7 @@
   {
     "id": "reddit_t3_sample2",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/sample2/",
+    "origin_country": "us",
     "title_ja": "遠心分離機のフタ、閉め忘れて回した人",
     "summary_ja": "うっかりミスの告白。あるあるとして多くの技師が自分の失敗談を返し、笑いと励ましが混ざる流れになっている。",
     "topic": "culture",
@@ -146,6 +184,7 @@
   {
     "id": "reddit_t3_sample1",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/sample1/",
+    "origin_country": "us",
     "title_ja": "夜勤ひとりで検体200件、電話も鳴りっぱなし",
     "summary_ja": "人員不足のまま負荷だけ増える夜勤の実態。せめて時給交渉をという声に、同じ状況の共感コメントが多数ついている。",
     "topic": "workload",

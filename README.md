@@ -19,7 +19,12 @@
   - Adzuna利用規約により、個別求人への恒久リンクのみ表示。求人数・平均給与などの
     **集計は行わない**（フロントにも実装しない）
 - **分類**: `lib/taxonomy.mjs`（唯一の正）／型は `lib/types.ts`
-- **フロント**: `src/pages/index.astro`（Astro、SSG）。`data/*.json` をビルド時に読み込み、
+- **フロント**: `src/pages/index.astro`（Astro、SSG）。ページ本体はビルド時に静的出力するが、
+  `data/*.json` はビルド時にimportせず、`src/scripts/feed.client.mjs` がブラウザから
+  GitHub `main` の生JSON（raw.githubusercontent.com）を直接fetchして描画する。
+  データ更新のたびにNetlifyの1デプロイ15クレジットを消費したくないための構成で、
+  `netlify.toml` の `ignore` ルールにより `data/` だけの変更ではデプロイ自体がスキップされる
+  （コード変更時のみ通常通りデプロイ）。
   「現場の声」「求人」をタブで切り替え表示（topicタブ + resonanceバッジ / 給与レンジバッジ）。
   `npm run build` で `dist/` に出力し、Netlify の無料枠にそのまま載る
   （`netlify.toml` 同梱、`chillmeru.netlify.app` 等のサブドメイン運用）

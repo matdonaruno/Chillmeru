@@ -1,3 +1,7 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  # data/ だけの変更（自動パイプライン・手動投入コミット）ではデプロイしない。
+  # フロントはランタイムで data/*.json をGitHub mainから直接fetchするので、
+  # データ更新に再デプロイ（15クレジット消費）は不要。exit 0 = ビルドをスキップ。
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)data'"

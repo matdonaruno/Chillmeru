@@ -33,6 +33,7 @@ async function main() {
     added.push({
       id: p.id,
       url: p.url,
+      origin_country: "us", // r/medlabprofessionalsはUS中心のsubredditのため固定
       title_ja: s.title_ja,
       summary_ja: s.summary_ja,
       topic: s.topic,
