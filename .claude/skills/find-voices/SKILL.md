@@ -4,8 +4,8 @@ description: >-
   Chillmeru（臨床検査技師向け「現場の声」サイト）向けに、Reddit/Xから面白い・共感できる
   投稿を探して要約し、data/us/voices.json に手動追加するプレイブック。
   「Xの投稿探して」「Redditで良い投稿ないか探して」「現場の声を追加して」
-  「voicesに新しいの足して」のような依頼で使う。Reddit公式APIの審査待ちの間の
-  つなぎ運用（手動投入パイプラインの一種）。
+  「voicesに新しいの足して」のような依頼で使う。Reddit公式Data API申請は却下済みで、
+  この対話内ブラウジングによる手動投入がReddit取得の恒久的な本線運用。
 ---
 
 # 現場の声を探して追加する（find-voices）
@@ -23,21 +23,46 @@ Chillmeruの`data/us/voices.json`に要約として追加するプレイブッ�
 
 ## できること・できないことの前提
 
-Xの検索・閲覧は、この対話に紐づく`claude-in-chrome`ブラウザ拡張で行う。
+Reddit/Xの検索・閲覧は、この対話に紐づく`claude-in-chrome`ブラウザ拡張で行う。
 これは**このセッション限りの手段**であり、GitHub Actionsの自動デイリー実行
 （`daily.yml`）からは呼び出せない。つまりこのSkillは「手動投入の一種」であって、
-Reddit/Xの自動収集パイプラインではない。Reddit公式Data API審査が通れば、
-Redditの自動化は`daily.yml`にそのまま任せられる（スコアベースで人間の判断が
-不要なため）。Xは今後も「たまに対話で探す」運用が向いている
-（理由: 有料API化・ToS上スクレイピング不可・そもそも良い投稿を選ぶ判断が
-自動化しづらい）。
+自動収集パイプラインではない。
+
+Reddit公式Data API申請は却下済み（2026-07-21、理由は定型文のみで不明）。
+`lib/reddit.mjs`の無認証JSON/RSSエンドポイントもTLS指紋レベルのボット判定で
+GitHub Actions・自宅回線どちらからも403/429ブロックされる（README「Reddit」参照）。
+一方で`claude-in-chrome`（ログイン済みの実ブラウザセッション）経由なら
+`old.reddit.com`のsubreddit一覧・検索・個別投稿・コメントすべて問題なく読める
+ことを2026-08-14に確認済み。これは無認証の自動プログラムがブロックされる話であって、
+人間（に紐づくセッション）が普通にページを読むこと自体を禁じる規約ではないと
+判断している。**Redditはこの方式を恒久的な本線として使う**（Data API復活は
+見込まない前提）。
+
+**LinkedInには同じ方式を使わない**。LinkedInの利用規約は「自動化された手段
+（拡張機能を含む）でのサービスアクセス」自体を明示的に禁止しており、
+実際にそれっぽい挙動でアカウント凍結された事例も多い。Redditの場合は
+無認証プログラムのボット判定の話でしかなく規約上の制約ではなかったのに対し、
+LinkedInは規約でアカウント単位のリスクがある。LinkedInは今まで通り
+**チャットへの手動貼り付けのみ**で対応する。
 
 ## 手順
 
 ### 1. Reddit/Xを検索する
 
-**Reddit**: `r/medlabprofessionals`が本命（自動パイプラインと同じソース）。
-`old.reddit.com`や`www.reddit.com`の検索・sort=topなどをブラウザで見に行く。
+**Reddit**（`mcp__claude-in-chrome__*`、事前に`ToolSearch`でロード）:
+- `https://old.reddit.com/r/medlabprofessionals/top/?sort=top&t=week`のように
+  sort/期間を変えてnavigateする。`old.reddit.com/r/<sub>/search?q=...&restrict_sr=on`
+  でサブレディット内検索もできる。
+- **本命**: `r/medlabprofessionals`（自動パイプラインと同じソース）。
+- **ネタが少ない時のフォールバック**（実在確認済み、2026-08-14）:
+  `r/medlabtechs`・`r/MLS_CLS`・`r/medlab`・`r/medlabcirclejerk`
+  （「no filter」を謳う分、本音の愚痴は拾いやすいが下品な表現も混じるので
+  要約時に選別する）・`r/MedLabInCanada`（`origin_country: "ca"`の候補になる）。
+  `r/labrats`は臨床検査ではなく研究室全般向けで読者層がずれるため対象外。
+- 投稿本文の正確な投稿日時は`get_page_text`ではなく`javascript_tool`で
+  `document.querySelector('time.live-timestamp')?.getAttribute('datetime')`
+  を実行してISO8601を取得し、`created_utc`の算出に使う（「2 days ago」等の
+  相対表記は暗算しない）。
 
 **X**（`mcp__claude-in-chrome__*`、事前に`ToolSearch`でロード）:
 - `https://x.com/search?q=<query>&f=live` の形で直接navigateする。
