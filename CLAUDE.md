@@ -58,7 +58,8 @@
   `claude-in-chrome`ブラウザ拡張でXを検索・閲覧して要約する運用（このセッション限りの手段で、
   GitHub Actionsの自動デイリー実行からは呼べない）。当たりの良い検索パターン・避けるべき
   ノイズ（求人スパム、ハッシュタグ単体検索の宣伝投稿、看護学生の"clinical lab"誤検出）を
-  Skill内に記録済み。Reddit公式Data API審査が通るまでのつなぎ運用の一つ。
+  Skill内に記録済み。Reddit公式Data API申請は却下されたため、Xとブラウザ手動投入は
+  今後もつなぎではなく本線の運用として継続する。
 - **Voice型に`origin_country`を追加**（2026-07-12、`lib/types.ts`）: ISO 3166-1 alpha-2小文字。
   日本語要約だけだと「海外の声」という新鮮さが失われるため、`src/scripts/feed.client.mjs`が
   国旗＋プラットフォーム名（Reddit/X）のピルをカードに描画する。自動パイプライン
@@ -84,12 +85,21 @@
   （自宅Mac、住宅回線IP）からも403/429で一律ブロックされる。curlでブラウザ風
   ヘッダーを付けても403のままな一方、実ブラウザでは開けるため、TLS指紋レベルの
   ボット判定と推定（ヘッダー偽装での回避は意図的な対策すり抜けになるため不採用）。
-  **Reddit公式の非商用Data API申請を提出済み（審査待ち）**。承認されれば
-  `oauth.reddit.com` 経由のOAuthに戻す（README「Reddit」参照、過去コミットに
-  OAuth実装あり）。審査結果が来るまでの**つなぎ**として、`scripts/process-inbox.mjs`
-  （手動投入パイプライン）を実装済み。ブラウザで読んだ投稿を `data/inbox/voices.txt`
-  にコピペで貯め、まとめてLLM要約→`data/us/voices.json`に反映する。inboxは
-  git管理外（原文をリポジトリに残さないため、下の設計制約と同じ理由）。
+  **Reddit公式の非商用Data API申請は却下された**（2026-07-21付、Reddit Support）。
+  却下理由は「Responsible Builder Policy不遵守および/または詳細不足」という定型文のみで、
+  具体的な指摘なし。申請文面自体もどこにも保存しておらず検証不能だった
+  （反省点、[[feedback_save_external_submissions]]相当）。Devvit（Reddit公式アプリ基盤）
+  経由の自動化も調査の結果、データアクセスがモデレーション目的の利用に限定されており
+  対象外と確定。ヘッドレスブラウザでのスクレイピング、Zapier/n8n系の外部SaaS中継も
+  それぞれ「bot対策の意図的すり抜け」「既存のn8n不使用方針と矛盾」で不採用と判断した。
+  **2026-08-14、`claude-in-chrome`（対話に紐づくログイン済み実ブラウザ）経由なら
+  `old.reddit.com`が403なしで問題なく読めることを確認済み**。無認証プログラムへの
+  ボット判定であって、人間のブラウジング自体を禁じる規約ではないと判断し、これを
+  Redditの**恒久的な本線**として採用（`.claude/skills/find-voices/SKILL.md`に手順化済み）。
+  `oauth.reddit.com`経由のOAuth復帰は当面見込まない。`scripts/process-inbox.mjs`
+  （手動投入パイプライン）も引き続き併用し、ブラウザで読んだ投稿を
+  `data/inbox/voices.txt` にコピペで貯め、まとめてLLM要約→`data/us/voices.json`に反映する。
+  inboxはgit管理外（原文をリポジトリに残さないため、下の設計制約と同じ理由）。
 - LLM要約（`lib/llm.mjs`、GLM `glm-4.7-flash`、`response_format: json_object`でJSON強制）と
   Telegram通知（`lib/telegram.mjs`）は実装済み。それぞれ単体スモークテストあり
   （`scripts/check-llm.mjs` / `scripts/check-telegram.mjs` とその workflow）。
@@ -107,9 +117,11 @@
 ## 次にClaude Codeにやってほしそうなタスク（優先順）
 1. ADZUNA_APP_ID/KEY を使った `check-adzuna` の動作確認、
    LLM_API_KEY / TELEGRAM_BOT_TOKEN・CHAT_ID を使った `check-llm` / `check-telegram`
-   の動作確認（Reddit APIの審査結果を待たずに進められる）
-2. Reddit Data API申請が承認され次第、`lib/reddit.mjs` をOAuth実装に戻し
-   `node scripts/fetch-voices.mjs` を通しで動作確認
+   の動作確認
+2. （保留）Reddit Data API再申請の要否をユーザーと相談。申請するなら却下理由
+   （Responsible Builder Policy不遵守/詳細不足という定型文のみ）を踏まえ、
+   ユースケースの説明をより具体化する必要がある。当面はfind-voices Skill経由の
+   手動投入（X）と`process-inbox.mjs`（Reddit含む）が本線。
 3. 給与統計（e-Stat / BLS）の取得スクリプトを追加。BLSはSOCコード`29-2011`
    （Medical and Clinical Laboratory Technologists）だがOEWSのseries ID組み立てが複雑、
    e-Statは統計表ID（statsDataId）を年度ごとにポータルで確認する必要があり、
