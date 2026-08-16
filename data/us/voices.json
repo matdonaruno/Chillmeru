@@ -26,6 +26,19 @@
     "fetched_at": "2026-08-14T21:32:01.817Z"
   },
   {
+    "id": "reddit_t3_1uz1pll",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uz1pll/cyclospora_the_little_creep_you_are/",
+    "origin_country": "us",
+    "title_ja": "『みんなサイクロスポラ』の悲鳴",
+    "summary_ja": "米国で発生したサイクロスポラ（寄生虫）のアウトブレイク騒動を受け、検査室に本来対象外の「有形便（下痢ではない普通の便）」がGI病原体パネル検査として大量に送られてくると投稿者が悲鳴を上げる。コメント欄では他施設からも「今日だけで23検体」「便培養の保育器が足りない」といった同様の悲鳴が相次ぎ、原因食材（大手サラダ加工会社の商品）が特定されるまで検査室が混乱に見舞われていた様子が伺える。",
+    "topic": "workload",
+    "resonance": "aruaru",
+    "score": 685,
+    "num_comments": 75,
+    "created_utc": 1784341160,
+    "fetched_at": "2026-08-16T00:58:35.499Z"
+  },
+  {
     "id": "reddit_t3_1uq7fcd",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uq7fcd/ok_guys_job_interview_incoming_with_10_years/",
     "origin_country": "us",
@@ -169,6 +182,19 @@
     "fetched_at": "2026-07-10T13:00:37.205Z"
   },
   {
+    "id": "linkedin_7452111807420211201",
+    "url": "https://www.linkedin.com/posts/faith-mbogo-573828b1_burnout-didnt-start-when-i-got-busy-it-share-7452111807420211201-7_iO/",
+    "origin_country": "us",
+    "title_ja": "「証明し続ける」ことに疲れた",
+    "summary_ja": "ケニア→英国→米国と3つの医療制度を渡り歩く中で、その都度「有能さの基準」が変わり、慣れてはまた一から証明し直す日々を送ってきた投稿者。ようやくキャリアが安定した頃には休みの日も疲れが取れなくなっていたと振り返り、それは長時間労働のせいではなく「適応し続けるコスト」だったのではと綴る。",
+    "topic": "culture",
+    "resonance": "moyamoya",
+    "score": 7,
+    "num_comments": 0,
+    "created_utc": 1778895787,
+    "fetched_at": "2026-08-16T01:44:01.210Z"
+  },
+  {
     "id": "x_2050615200970158486",
     "url": "https://x.com/Olamilekan1404/status/2050615200970158486",
     "origin_country": "ng",
@@ -193,5 +219,18 @@
     "num_comments": 1,
     "created_utc": 1775390400,
     "fetched_at": "2026-07-11T22:34:12.000Z"
+  },
+  {
+    "id": "linkedin_7436080743123976192",
+    "url": "https://www.linkedin.com/posts/rusty-wendt-drph-dcls_hot-take-california-has-some-explaining-share-7436080743123976192-dIZX/",
+    "origin_country": "us",
+    "title_ja": "厳しすぎる資格要件が人手不足招く",
+    "summary_ja": "全米50州の中でもカリフォルニア州は検査技師の資格要件が突出して厳しく、他州の資格保有者がそのまま働けない「ボトルネック」を生んでいると投稿者が指摘。州の公的機関自身が2022年の報告書で人手不足の一因と認めていながら要件が見直されていない状況に、「なぜ変わらないのか説明してほしい」と苛立ちをぶつけている。",
+    "topic": "certification",
+    "resonance": "moyamoya",
+    "score": 37,
+    "num_comments": 11,
+    "created_utc": 1773625387,
+    "fetched_at": "2026-08-16T01:44:01.210Z"
   }
 ]

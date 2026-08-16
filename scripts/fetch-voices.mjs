@@ -16,7 +16,7 @@ import { readVoices, mergeVoices, writeVoicesAndMeta } from "../lib/voicesStore.
 
 const COUNTRY = "us";
 const SUBREDDIT = "medlabprofessionals";
-const KEEP = 15;            // フロント表示・保持する最新件数
+const KEEP = 30;            // フロント表示・保持する最新件数
 const FETCH_LIMIT = 25;     // 1回に見に行く投稿数
 
 async function main() {

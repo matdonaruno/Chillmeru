@@ -100,6 +100,11 @@
   （手動投入パイプライン）も引き続き併用し、ブラウザで読んだ投稿を
   `data/inbox/voices.txt` にコピペで貯め、まとめてLLM要約→`data/us/voices.json`に反映する。
   inboxはgit管理外（原文をリポジトリに残さないため、下の設計制約と同じ理由）。
+  **`daily.yml`（daily-voices、Reddit自動取得cron）は2026-08-15に`gh workflow disable`で
+  無効化済み**。直近8日連続で`Error: reddit fetch 403`で失敗し続けており、復活の見込みが
+  ないため。ファイル自体は残しているので、将来また自動化の目処が立てば
+  `gh workflow enable daily.yml`で戻せる。`daily-jobs.yml`（Adzuna求人取得）は無関係で
+  正常稼働中（`daily-jobs`はactiveのまま）。
 - LLM要約（`lib/llm.mjs`、GLM `glm-4.7-flash`、`response_format: json_object`でJSON強制）と
   Telegram通知（`lib/telegram.mjs`）は実装済み。それぞれ単体スモークテストあり
   （`scripts/check-llm.mjs` / `scripts/check-telegram.mjs` とその workflow）。

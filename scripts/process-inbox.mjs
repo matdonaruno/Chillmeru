@@ -18,7 +18,7 @@ import { summarizePost } from "../lib/llm.mjs";
 import { readVoices, mergeVoices, writeVoicesAndMeta } from "../lib/voicesStore.mjs";
 
 const COUNTRY = "us";
-const KEEP = 15;
+const KEEP = 30;
 const INBOX_PATH = "data/inbox/voices.txt";
 const INBOX_TEMPLATE = `# ここにRedditの投稿をコピペして貯めてください。1件ずつ下記フォーマットで、
 # 区切りは "---" だけの行にします（複数件まとめて貼ってOK）。
