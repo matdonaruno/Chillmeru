@@ -26,6 +26,19 @@
     "fetched_at": "2026-08-14T21:32:01.817Z"
   },
   {
+    "id": "reddit_t3_1uz1pll",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uz1pll/cyclospora_the_little_creep_you_are/",
+    "origin_country": "us",
+    "title_ja": "『みんなサイクロスポラ』の悲鳴",
+    "summary_ja": "米国で発生したサイクロスポラ（寄生虫）のアウトブレイク騒動を受け、検査室に本来対象外の「有形便（下痢ではない普通の便）」がGI病原体パネル検査として大量に送られてくると投稿者が悲鳴を上げる。コメント欄では他施設からも「今日だけで23検体」「便培養の保育器が足りない」といった同様の悲鳴が相次ぎ、原因食材（大手サラダ加工会社の商品）が特定されるまで検査室が混乱に見舞われていた様子が伺える。",
+    "topic": "workload",
+    "resonance": "aruaru",
+    "score": 685,
+    "num_comments": 75,
+    "created_utc": 1784341160,
+    "fetched_at": "2026-08-16T00:58:35.499Z"
+  },
+  {
     "id": "reddit_t3_1uq7fcd",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1uq7fcd/ok_guys_job_interview_incoming_with_10_years/",
     "origin_country": "us",
@@ -169,29 +182,16 @@
     "fetched_at": "2026-07-10T13:00:37.205Z"
   },
   {
-    "id": "x_2050615200970158486",
-    "url": "https://x.com/Olamilekan1404/status/2050615200970158486",
-    "origin_country": "ng",
-    "title_ja": "喀痰ください、唾持ってきました",
-    "summary_ja": "喀痰検体をお願いしたら、患者が唾液を持ってきたというMLSあるあるのジョーク投稿。「では…」と絶句する反応に、検査技師仲間から共感の声が集まった。",
-    "topic": "culture",
-    "resonance": "aruaru",
-    "score": 2,
-    "num_comments": 0,
-    "created_utc": 1777772100,
-    "fetched_at": "2026-07-11T22:34:12.000Z"
-  },
-  {
-    "id": "x_2040547234354540873",
-    "url": "https://x.com/RussellShaw_MLS/status/2040547234354540873",
+    "id": "linkedin_7452111807420211201",
+    "url": "https://www.linkedin.com/posts/faith-mbogo-573828b1_burnout-didnt-start-when-i-got-busy-it-share-7452111807420211201-7_iO/",
     "origin_country": "us",
-    "title_ja": "検査室は人手不足、管理部門だけ肥大化",
-    "summary_ja": "臨床判断の7割は検査データに基づくのに、検査部門は慢性的な人手不足・予算不足で経営陣から見えない存在のまま。一方で検体の請求コーディングを担う部門は、検査部長が何年も求めてきた増員をずっと得ており、管理部門が臨床部門より速いペースで膨張し続けていると指摘する。",
-    "topic": "workload",
+    "title_ja": "「証明し続ける」ことに疲れた",
+    "summary_ja": "ケニア→英国→米国と3つの医療制度を渡り歩く中で、その都度「有能さの基準」が変わり、慣れてはまた一から証明し直す日々を送ってきた投稿者。ようやくキャリアが安定した頃には休みの日も疲れが取れなくなっていたと振り返り、それは長時間労働のせいではなく「適応し続けるコスト」だったのではと綴る。",
+    "topic": "culture",
     "resonance": "moyamoya",
-    "score": 16,
-    "num_comments": 1,
-    "created_utc": 1775390400,
-    "fetched_at": "2026-07-11T22:34:12.000Z"
+    "score": 7,
+    "num_comments": 0,
+    "created_utc": 1778895787,
+    "fetched_at": "2026-08-16T01:44:01.210Z"
   }
 ]
