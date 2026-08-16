@@ -1,8 +1,8 @@
 ---
 name: find-voices
 description: >-
-  Chillmeru（臨床検査技師向け「現場の声」サイト）向けに、Reddit/Xから面白い・共感できる
-  投稿を探して要約し、data/us/voices.json に手動追加するプレイブック。
+  Chillmeru（臨床検査技師向け「現場の声」サイト）向けに、Reddit/X/LinkedInから
+  面白い・共感できる投稿を探して要約し、data/us/voices.json に手動追加するプレイブック。
   「Xの投稿探して」「Redditで良い投稿ないか探して」「現場の声を追加して」
   「voicesに新しいの足して」のような依頼で使う。Reddit公式Data API申請は却下済みで、
   この対話内ブラウジングによる手動投入がReddit取得の恒久的な本線運用。
@@ -10,8 +10,16 @@ description: >-
 
 # 現場の声を探して追加する（find-voices）
 
-Reddit/Xを見て「あるある」「もやもや」に刺さる臨床検査技師の投稿を見つけ、
+Reddit/X/LinkedInを見て「あるある」「もやもや」に刺さる臨床検査技師の投稿を見つけ、
 Chillmeruの`data/us/voices.json`に要約として追加するプレイブック。
+
+## 見つけた投稿の渡し方（LinkedIn・その他手動ソース共通）
+
+**投稿のURLと本文をこのチャットにそのまま貼るだけでいい。** テンプレも
+ファイルも不要。`data/inbox/voices.txt`は使わない（そちらは
+`process-inbox.mjs`用の別経路で、この対話内での運用では使わない）。
+貼られたら、この後の「3. Voiceオブジェクトを組み立てる」の表に沿って
+Claudeが要約案を作り、確認を取ってから`data/us/voices.json`に反映する。
 
 ## 前提・変更してはいけない制約（CLAUDE.md参照）
 
@@ -47,7 +55,7 @@ LinkedInは規約でアカウント単位のリスクがある。LinkedInは今�
 
 ## 手順
 
-### 1. Reddit/Xを検索する
+### 1. Reddit/X/LinkedInを検索する
 
 **Reddit**（`mcp__claude-in-chrome__*`、事前に`ToolSearch`でロード）:
 - `https://old.reddit.com/r/medlabprofessionals/top/?sort=top&t=week`のように
@@ -78,6 +86,20 @@ LinkedInは規約でアカウント単位のリスクがある。LinkedInは今�
 - 個別ポストのpermalinkは、投稿の日時リンク（例: `Apr 5`）の`href`から
   `/USERNAME/status/TWEET_ID`を取得する（`read_page`の`filter: "interactive"`で拾える）。
 
+**LinkedIn**（claude-in-chromeは使わない。ユーザー自身のブラウザで探してもらう）:
+- 下記の検索URLをクリックして開き、良さそうな投稿が見つかったら
+  URLと本文をこのチャットに貼ってもらう（貼り方は上の「見つけた投稿の渡し方」参照）。
+- **検索URLの候補**（LinkedInの投稿検索は`/search/results/content/?keywords=`形式。
+  以下はクエリの型の例で、X/Redditと違いLinkedIn上でまだ実地検証していない
+  ため「当たりが良い」保証はない。ヒットが悪ければ他のキーワードも試してほしい）:
+  - [`"medical laboratory scientist" burnout`](https://www.linkedin.com/search/results/content/?keywords=%22medical%20laboratory%20scientist%22%20burnout)
+  - [`"clinical lab" short staffed`](https://www.linkedin.com/search/results/content/?keywords=%22clinical%20lab%22%20short%20staffed)
+  - [`"lab tech" underappreciated`](https://www.linkedin.com/search/results/content/?keywords=%22lab%20tech%22%20underappreciated)
+  - [`"medical technologist" exhausted`](https://www.linkedin.com/search/results/content/?keywords=%22medical%20technologist%22%20exhausted)
+- LinkedInは投稿が啓発的・前向きな内容に偏りがちなので、Reddit/Xより
+  「あるある」「もやもや」に刺さる投稿の密度は低いと想定される。コメント欄の
+  本音の方が拾えることもある。
+
 ### 2. 投稿を評価する（スパム除外の判断基準）
 
 - 個人の本音・実体験・ジョークか？ 企業/求人代行/宣伝アカウントではないか？
@@ -88,15 +110,15 @@ LinkedInは規約でアカウント単位のリスクがある。LinkedInは今�
 
 | フィールド | 決め方 |
 |---|---|
-| `id` | `x_<tweet_id>` または `reddit_t3_<id>` |
+| `id` | `x_<tweet_id>` / `reddit_t3_<id>` / LinkedInは`linkedin_<activity_id>`（URL中の`-activity-<数字>-`から抽出、取れなければURLのハッシュで代用） |
 | `url` | 投稿の恒久リンク（permalink） |
 | `origin_country` | ISO 3166-1 alpha-2小文字。プロフィール（所属団体等）や文脈から推定。不明なら`"us"`にフォールバック |
 | `title_ja` | 全角20字程度の見出し |
 | `summary_ja` | 2〜3文の要約（言い換え、原文転載しない） |
 | `topic` | `lib/taxonomy.mjs`の`TOPICS`から選ぶ |
 | `resonance` | `RESONANCES`から選ぶ、当てはまらなければ`null` |
-| `score` | Xなら「いいね」数、Redditなら投稿スコア（upvote）。不明なら見た目の反応量から妥当な値を入れる（0で埋めない） |
-| `num_comments` | Xなら返信数、Redditならコメント数 |
+| `score` | Xなら「いいね」数、Redditなら投稿スコア（upvote）、LinkedInなら「いいね」等のリアクション数。不明なら見た目の反応量から妥当な値を入れる（0で埋めない） |
+| `num_comments` | Xなら返信数、Redditならコメント数、LinkedInならコメント数 |
 | `created_utc` | UNIX秒。**暗算せず**`date -j -u -f "%Y-%m-%d %H:%M:%S" "YYYY-MM-DD HH:MM:SS" +%s`（macOS）で正確に算出する |
 | `fetched_at` | 現在時刻のISO8601（`date -u +%FT%T.000Z`等） |
 
