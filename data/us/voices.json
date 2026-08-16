@@ -193,5 +193,44 @@
     "num_comments": 0,
     "created_utc": 1778895787,
     "fetched_at": "2026-08-16T01:44:01.210Z"
+  },
+  {
+    "id": "x_2050615200970158486",
+    "url": "https://x.com/Olamilekan1404/status/2050615200970158486",
+    "origin_country": "ng",
+    "title_ja": "喀痰ください、唾持ってきました",
+    "summary_ja": "喀痰検体をお願いしたら、患者が唾液を持ってきたというMLSあるあるのジョーク投稿。「では…」と絶句する反応に、検査技師仲間から共感の声が集まった。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 2,
+    "num_comments": 0,
+    "created_utc": 1777772100,
+    "fetched_at": "2026-07-11T22:34:12.000Z"
+  },
+  {
+    "id": "x_2040547234354540873",
+    "url": "https://x.com/RussellShaw_MLS/status/2040547234354540873",
+    "origin_country": "us",
+    "title_ja": "検査室は人手不足、管理部門だけ肥大化",
+    "summary_ja": "臨床判断の7割は検査データに基づくのに、検査部門は慢性的な人手不足・予算不足で経営陣から見えない存在のまま。一方で検体の請求コーディングを担う部門は、検査部長が何年も求めてきた増員をずっと得ており、管理部門が臨床部門より速いペースで膨張し続けていると指摘する。",
+    "topic": "workload",
+    "resonance": "moyamoya",
+    "score": 16,
+    "num_comments": 1,
+    "created_utc": 1775390400,
+    "fetched_at": "2026-07-11T22:34:12.000Z"
+  },
+  {
+    "id": "linkedin_7436080743123976192",
+    "url": "https://www.linkedin.com/posts/rusty-wendt-drph-dcls_hot-take-california-has-some-explaining-share-7436080743123976192-dIZX/",
+    "origin_country": "us",
+    "title_ja": "厳しすぎる資格要件が人手不足招く",
+    "summary_ja": "全米50州の中でもカリフォルニア州は検査技師の資格要件が突出して厳しく、他州の資格保有者がそのまま働けない「ボトルネック」を生んでいると投稿者が指摘。州の公的機関自身が2022年の報告書で人手不足の一因と認めていながら要件が見直されていない状況に、「なぜ変わらないのか説明してほしい」と苛立ちをぶつけている。",
+    "topic": "certification",
+    "resonance": "moyamoya",
+    "score": 37,
+    "num_comments": 11,
+    "created_utc": 1773625387,
+    "fetched_at": "2026-08-16T01:44:01.210Z"
   }
 ]
