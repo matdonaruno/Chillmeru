@@ -4,4 +4,9 @@
   # data/ だけの変更（自動パイプライン・手動投入コミット）ではデプロイしない。
   # フロントはランタイムで data/*.json をGitHub mainから直接fetchするので、
   # データ更新に再デプロイ（15クレジット消費）は不要。exit 0 = ビルドをスキップ。
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)data'"
+  # 🔴 $CACHED_COMMIT_REF が空 (ビルドキャッシュなし) だと素の diff は
+  #    `git diff --quiet $COMMIT_REF` の1引数呼び出しに縮退し、「ワーキングツリー
+  #    (=今チェックアウト中の $COMMIT_REF そのもの) vs $COMMIT_REF」を比較して
+  #    常に差分なし=skip と誤判定していた (2026-08-19 発覚: コード変更のデプロイが
+  #    4連続で "no content change" として握り潰されていた)。空なら必ずビルドする。
+  ignore = "bash -c 'test -n \"$CACHED_COMMIT_REF\" && git diff --quiet \"$CACHED_COMMIT_REF\" \"$COMMIT_REF\" -- . \":(exclude)data\"'"
