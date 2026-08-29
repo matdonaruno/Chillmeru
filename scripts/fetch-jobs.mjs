@@ -17,7 +17,9 @@ const COUNTRY = "us";
 const WHAT = "medical laboratory technologist";
 const KEEP = 15;           // フロント表示・保持する最新件数
 const FETCH_LIMIT = 20;    // 1回に見に行く求人数
-const SUMMARIZE_BUDGET_MS = 10 * 60 * 1000; // 要約に使う時間の上限。超えた分は次回に回す
+// 要約に使う時間の上限。超えた分は次回に回す。正常に完走した実行が11〜13分
+// かかっているので、通常時には発動せず暴走時だけ効く値にしてある（最長の実績は17分）。
+const SUMMARIZE_BUDGET_MS = 25 * 60 * 1000;
 const JOBS_PATH = `data/${COUNTRY}/jobs.json`;
 const META_PATH = "data/meta.json";
 
