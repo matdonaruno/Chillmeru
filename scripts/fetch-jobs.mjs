@@ -53,7 +53,11 @@ async function main() {
       s = await summarizeJob(j);
     } catch (e) {
       deferred++;
-      if (e.transient === false) permanentFailure = e;
+      // callLLMが .transient = true を付けるのは429/5xxだけ。それ以外
+      // （APIキー未設定、応答が壊れている、ネットワーク断など種類の分からない
+      // 失敗）は「人が直す必要がある」側に倒す。判定できない失敗を黙って
+      // 緑にすると、キーが失効した日から毎日「成功」を報告し続けることになる。
+      if (e.transient !== true) permanentFailure = e;
       console.warn(`  ⚠ 要約に失敗（次回に回す） id=${j.id}: ${String(e.message).split("\n")[0]}`);
       continue;
     }
