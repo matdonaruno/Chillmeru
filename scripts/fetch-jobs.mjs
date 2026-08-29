@@ -17,6 +17,7 @@ const COUNTRY = "us";
 const WHAT = "medical laboratory technologist";
 const KEEP = 15;           // フロント表示・保持する最新件数
 const FETCH_LIMIT = 20;    // 1回に見に行く求人数
+const SUMMARIZE_BUDGET_MS = 10 * 60 * 1000; // 要約に使う時間の上限。超えた分は次回に回す
 const JOBS_PATH = `data/${COUNTRY}/jobs.json`;
 const META_PATH = "data/meta.json";
 
@@ -29,8 +30,30 @@ async function main() {
 
   const now = new Date().toISOString();
   const added = [];
-  for (const j of fresh) {
-    const s = await summarizeJob(j);
+  let deferred = 0; // 今回要約できず、次回に持ち越した件数
+
+  // GLMの無料枠は混雑（429 code 1305）で個別のリクエストが落ちることがある。
+  // 1件の失敗でそれまでの要約を全部捨てないよう、失敗分だけスキップする。
+  // スキップした求人はjobs.jsonに入らない＝次回もseenに含まれないので、
+  // 状態を持たなくても自動的に再挑戦される。
+  const startedAt = Date.now();
+  for (const [i, j] of fresh.entries()) {
+    if (Date.now() - startedAt > SUMMARIZE_BUDGET_MS) {
+      const rest = fresh.length - i;
+      deferred += rest;
+      console.warn(`  ⏱ 要約の時間上限（${SUMMARIZE_BUDGET_MS / 60000}分）に達した。残り${rest}件は次回に回す`);
+      break;
+    }
+
+    let s;
+    try {
+      s = await summarizeJob(j);
+    } catch (e) {
+      deferred++;
+      console.warn(`  ⚠ 要約に失敗（次回に回す） id=${j.id}: ${String(e.message).split("\n")[0]}`);
+      continue;
+    }
+
     added.push({
       id: j.id,
       url: j.url,
@@ -46,6 +69,12 @@ async function main() {
     });
   }
 
+  // 新着があったのに1件も要約できなかったのはLLM側の障害。ここで落として気付けるようにする。
+  // 新着0件（Adzunaに新しい求人がなかった）は正常なので、そのまま成功にする。
+  if (fresh.length > 0 && added.length === 0) {
+    throw new Error(`新着${fresh.length}件をいずれも要約できなかった（LLM側の障害の可能性）`);
+  }
+
   // 新着を前に、掲載日時で並べて最新N件だけ保持
   const merged = [...added, ...existing]
     .sort((a, b) => new Date(b.created_utc) - new Date(a.created_utc))
@@ -58,7 +87,7 @@ async function main() {
   meta.counts = { ...(meta.counts || {}), [`${COUNTRY}_jobs`]: merged.length };
   await writeFile(META_PATH, JSON.stringify(meta, null, 2) + "\n");
 
-  console.log(`added ${added.length}, total ${merged.length}`);
+  console.log(`added ${added.length}, deferred ${deferred}, total ${merged.length}`);
 }
 
 main().catch((e) => {

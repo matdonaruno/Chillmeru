@@ -7,6 +7,19 @@
 サーバーレス・gitネイティブな日次更新コンテンツサイト。読み取り専用。
 
 ## セッション引き継ぎメモ（2026-07-11時点、状況が変わったら更新/削除してよい）
+- **daily-jobsの429対策**（2026-08-29）: 8月後半、`daily-jobs`が断続的に失敗していた
+  （8/20-24, 8/27-29）。原因はモデルの変更ではなく、GLMが返す
+  `429 code 1305`（该模型当前访问量过大＝無料枠のflashモデルが混雑中）。
+  問題の本体はGLM側ではなく`scripts/fetch-jobs.mjs`の作りにあり、20件中1件でも
+  429で落ちると`main().catch()`でプロセスごと終了し、**それまでに成功していた
+  要約が全部捨てられていた**（`writeFile`がループの後ろにあるため）。対策として
+  (1)`summarizeJob`をtry/catchで包んで失敗分だけスキップ（スキップした求人は
+  jobs.jsonに入らない＝次回もseenに含まれず自動で再挑戦される）、
+  (2)全滅時（新着>0かつ成功0）だけ明示的にexit 1、(3)リトライ待ちを
+  1s/3s→5s/15s/30s/60sの5回に延長、(4)要約に10分のwall-clock budget、
+  (5)cronを`30 21`→`23 16`（UTC）に移動。(5)はGitHubのスケジュール遅延が実測で
+  3〜8時間あり、21:30 UTC指定でも実際にはUTC 00:56〜05:31＝中国時間の日中
+  （GLM混雑帯）に着地していたため、遅延しても中国の深夜に収まるよう早めた。
 - **手動投入の運用が変わった**: `LLM_API_KEY=... node scripts/process-inbox.mjs`ではなく、
   **Claude Codeとの対話セッション内で直接 `data/inbox/voices.txt` を読んで要約する**
   運用に切り替え済み（LLM APIコスト・Netlifyデプロイプレビューのビルド分数、両方の節約が目的）。
@@ -21,9 +34,8 @@
   で恒久的に失敗したため、`lib/llm.mjs`を智譜AI/Zhipu AIの GLM（`glm-4.7-flash`、
   `https://open.bigmodel.cn/api/paas/v4/chat/completions`）に全面切替。
   環境変数名は`LLM_API_KEY`のまま流用（呼び出し側`summarizePost`/`summarizeJob`は無変更）。
-  **要対応**: GitHub Secretsの`LLM_API_KEY`はまだ旧Geminiキーの値のままなので、
-  bigmodel.cnで発行したGLMキーの値に**差し替えが必要**（ユーザーのみ実行可）。
-  差し替えるまで`daily-jobs`/`daily`/`check-llm`は401等で失敗する。
+  GitHub Secretsの`LLM_API_KEY`はGLMキーに差し替え済み（`daily-jobs`が実際に
+  GLMへ到達して429を返している＝認証は通っていることで確認、2026-08-29）。
   GeminiのresponseSchemaと違いGLMの`response_format: json_object`はJSON構造までは
   強制しないため、期待する形はプロンプト文面に明記し、受け取り側の検証
   （`TOPICS.includes()`等）で安全側に倒している。
