@@ -18,6 +18,12 @@ Chillmeruの`data/us/voices.json`に要約として追加するプレイブッ�
 **投稿のURLと本文をこのチャットにそのまま貼るだけでいい。** テンプレも
 ファイルも不要。`data/inbox/voices.txt`は使わない（そちらは
 `process-inbox.mjs`用の別経路で、この対話内での運用では使わない）。
+
+**スクリーンショットではなくテキストで受け取ること。** 2026-08-29に検索結果の
+スクショを4枚もらったが、フィード全体を縦長に撮った画像は縮小率が高く、1枚目
+以外は本文がまったく判読できなかった。要約は本文が読めないと書けないので、
+画像で渡されたら「URLと本文をテキストで」と頼み直す。ユーザーに撮り直しを
+させるより、コピペの方が早くて確実。
 貼られたら、この後の「3. Voiceオブジェクトを組み立てる」の表に沿って
 Claudeが要約案を作り、確認を取ってから`data/us/voices.json`に反映する。
 
@@ -89,16 +95,26 @@ LinkedInは規約でアカウント単位のリスクがある。LinkedInは今�
 **LinkedIn**（claude-in-chromeは使わない。ユーザー自身のブラウザで探してもらう）:
 - 下記の検索URLをクリックして開き、良さそうな投稿が見つかったら
   URLと本文をこのチャットに貼ってもらう（貼り方は上の「見つけた投稿の渡し方」参照）。
-- **検索URLの候補**（LinkedInの投稿検索は`/search/results/content/?keywords=`形式。
-  以下はクエリの型の例で、X/Redditと違いLinkedIn上でまだ実地検証していない
-  ため「当たりが良い」保証はない。ヒットが悪ければ他のキーワードも試してほしい）:
+- **職種を一意に特定するフレーズだけを使う**（LinkedInの投稿検索は
+  `/search/results/content/?keywords=`形式。引用符のフレーズ検索は効くが、
+  `NOT`等のブール除外は効かない前提で組むこと）:
   - [`"medical laboratory scientist" burnout`](https://www.linkedin.com/search/results/content/?keywords=%22medical%20laboratory%20scientist%22%20burnout)
-  - [`"clinical lab" short staffed`](https://www.linkedin.com/search/results/content/?keywords=%22clinical%20lab%22%20short%20staffed)
-  - [`"lab tech" underappreciated`](https://www.linkedin.com/search/results/content/?keywords=%22lab%20tech%22%20underappreciated)
-  - [`"medical technologist" exhausted`](https://www.linkedin.com/search/results/content/?keywords=%22medical%20technologist%22%20exhausted)
-- LinkedInは投稿が啓発的・前向きな内容に偏りがちなので、Reddit/Xより
-  「あるある」「もやもや」に刺さる投稿の密度は低いと想定される。コメント欄の
-  本音の方が拾えることもある。
+  - [`"clinical laboratory scientist" understaffed`](https://www.linkedin.com/search/results/content/?keywords=%22clinical%20laboratory%20scientist%22%20understaffed)
+  - [`"medical laboratory technologist" undervalued`](https://www.linkedin.com/search/results/content/?keywords=%22medical%20laboratory%20technologist%22%20undervalued)
+  - [`"MLS ASCP"`](https://www.linkedin.com/search/results/content/?keywords=%22MLS%20ASCP%22)（資格名。当事者しか書かないので純度が高い）
+
+- **使ってはいけない語**（2026-08-29に実地で確認）:
+  - `"medical technologist"` … 英語圏では**放射線技師**（radiologic technologist /
+    MRT）を指す文脈で広く使われ、検索結果がradiology・imaging系で埋まる。
+  - `"lab tech"` … 研究室の技術員・歯科技工士なども拾う。
+  - `"clinical lab"` … 看護学生の実習（clinical rotation）に誤ヒットする
+    （Xでの既知の問題と同じ）。
+- **実地の結果（2026-08-29）**: 上記の旧クエリで検索したところ、拾えたのは
+  求人代行・RPO・ニュースレターの企業宣伝、放射線技師の投稿、当事者でない人が
+  書いたバーンアウト啓発文（リアクション一桁）ばかりで、**臨床検査技師本人の
+  本音投稿はゼロだった**。LinkedInは啓発的・前向きな内容に偏るうえ、職種の
+  境界が曖昧なので、Reddit/Xより密度は明確に低い。**Redditを先に当たり、
+  LinkedInは余力があれば見る程度でよい**。
 
 ### 2. 投稿を評価する（スパム除外の判断基準）
 
