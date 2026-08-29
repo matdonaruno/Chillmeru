@@ -17,6 +17,9 @@ const COUNTRY = "us";
 const WHAT = "medical laboratory technologist";
 const KEEP = 15;           // フロント表示・保持する最新件数
 const FETCH_LIMIT = 20;    // 1回に見に行く求人数
+// 要約に使う時間の上限。超えた分は次回に回す。正常に完走した実行が11〜13分
+// かかっているので、通常時には発動せず暴走時だけ効く値にしてある（最長の実績は17分）。
+const SUMMARIZE_BUDGET_MS = 25 * 60 * 1000;
 const JOBS_PATH = `data/${COUNTRY}/jobs.json`;
 const META_PATH = "data/meta.json";
 
@@ -29,8 +32,36 @@ async function main() {
 
   const now = new Date().toISOString();
   const added = [];
-  for (const j of fresh) {
-    const s = await summarizeJob(j);
+  let deferred = 0;              // 今回要約できず、次回に持ち越した件数
+  let permanentFailure = null;   // 待っても直らない種類の失敗（人が直す必要がある）
+
+  // GLMの無料枠は混雑（429 code 1305）で個別のリクエストが落ちることがある。
+  // 1件の失敗でそれまでの要約を全部捨てないよう、失敗分だけスキップする。
+  // スキップした求人はjobs.jsonに入らない＝次回もseenに含まれないので、
+  // 状態を持たなくても自動的に再挑戦される。
+  const startedAt = Date.now();
+  for (const [i, j] of fresh.entries()) {
+    if (Date.now() - startedAt > SUMMARIZE_BUDGET_MS) {
+      const rest = fresh.length - i;
+      deferred += rest;
+      console.warn(`  ⏱ 要約の時間上限（${SUMMARIZE_BUDGET_MS / 60000}分）に達した。残り${rest}件は次回に回す`);
+      break;
+    }
+
+    let s;
+    try {
+      s = await summarizeJob(j);
+    } catch (e) {
+      deferred++;
+      // callLLMが .transient = true を付けるのは429/5xxだけ。それ以外
+      // （APIキー未設定、応答が壊れている、ネットワーク断など種類の分からない
+      // 失敗）は「人が直す必要がある」側に倒す。判定できない失敗を黙って
+      // 緑にすると、キーが失効した日から毎日「成功」を報告し続けることになる。
+      if (e.transient !== true) permanentFailure = e;
+      console.warn(`  ⚠ 要約に失敗（次回に回す） id=${j.id}: ${String(e.message).split("\n")[0]}`);
+      continue;
+    }
+
     added.push({
       id: j.id,
       url: j.url,
@@ -46,6 +77,18 @@ async function main() {
     });
   }
 
+  // 新着があったのに1件も要約できなかった場合の扱い。
+  // GLMのスロットリング（429）や時間切れなら、明日の実行でやり直せばよいので
+  // ワークフローは緑のまま終える（毎日赤になっても対処のしようがない）。
+  // モデルIDが無効・APIキーが無効といった「人が直さないと直らない」失敗を
+  // 一度でも見ていたときだけ落とす。
+  if (fresh.length > 0 && added.length === 0) {
+    if (permanentFailure) throw permanentFailure;
+    console.warn(`⚠ 新着${fresh.length}件をいずれも要約できなかった（GLMのスロットリングか時間切れ）。次回に持ち越す`);
+    console.log(`added 0, deferred ${deferred}, total ${existing.length}（データは変更しない）`);
+    return;
+  }
+
   // 新着を前に、掲載日時で並べて最新N件だけ保持
   const merged = [...added, ...existing]
     .sort((a, b) => new Date(b.created_utc) - new Date(a.created_utc))
@@ -58,7 +101,7 @@ async function main() {
   meta.counts = { ...(meta.counts || {}), [`${COUNTRY}_jobs`]: merged.length };
   await writeFile(META_PATH, JSON.stringify(meta, null, 2) + "\n");
 
-  console.log(`added ${added.length}, total ${merged.length}`);
+  console.log(`added ${added.length}, deferred ${deferred}, total ${merged.length}`);
 }
 
 main().catch((e) => {
