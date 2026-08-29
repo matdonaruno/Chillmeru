@@ -5,7 +5,12 @@ name: check-llm
 # 通常の ubuntu-latest ランナーで動く（check-reddit と違い self-hosted 不要）。
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "試すGLMモデルID（空ならlib/llm.mjsの既定リスト）"
+        required: false
+        default: ""
 
 jobs:
   check:
@@ -18,4 +23,5 @@ jobs:
       - name: Check LLM summarize
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          GLM_MODEL: ${{ inputs.model }}
         run: node scripts/check-llm.mjs
