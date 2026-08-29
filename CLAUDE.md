@@ -145,9 +145,10 @@
   動作確認のみ。
 
 ## 次にClaude Codeにやってほしそうなタスク（優先順）
-1. ADZUNA_APP_ID/KEY を使った `check-adzuna` の動作確認、
-   LLM_API_KEY / TELEGRAM_BOT_TOKEN・CHAT_ID を使った `check-llm` / `check-telegram`
-   の動作確認
+1. `TELEGRAM_BOT_TOKEN`/`CHAT_ID` を使った `check-telegram` の動作確認
+   （`gh workflow run check-telegram.yml`）。`check-llm`は2026-08-29に成功を確認済み、
+   Adzunaも`daily-jobs`が求人取得まで到達しているので実質確認済み。
+   残るはTelegramだけ（`check-adzuna`を単体で回すなら合わせて）
 2. （保留）Reddit Data API再申請の要否をユーザーと相談。申請するなら却下理由
    （Responsible Builder Policy不遵守/詳細不足という定型文のみ）を踏まえ、
    ユースケースの説明をより具体化する必要がある。当面はfind-voices Skill経由の
@@ -169,6 +170,17 @@
   （例: `data/2026-08-16-voices`、`docs/xxx`）を作り、PRをsquash mergeしたら
   ローカル・リモートとも即削除する。次の変更ではまた`main`から新しく切る。
   同じブランチを2回以上のPRにまたがって使い回さないこと。
+- **古いブランチを消すときは、先に`archive/<名前>`の軽量タグを打ってpushする**。
+  リモートのブランチを消すとコミットが参照されなくなり、GitHubのgcでいずれ
+  到達不能になるため（SHAを控えておくだけでは復元を保証できない）。
+  2026-08-30に、使い捨てブランチ運用を決める前から残っていた5本
+  （`chore/gitignore-claude-local` / `chore/switch-to-netlify` /
+  `claude/new-project-setup-2dksqx` / `feat/job-salary-data` /
+  `feat/mobile-feed-ui`、いずれも2026-07-07が最終コミット）を、
+  中身がmainに入っていることを1本ずつ確認したうえで削除した。
+  対応する`archive/*`タグが残っているので、
+  `git push origin archive/mobile-feed-ui:refs/heads/feat/mobile-feed-ui`
+  のようにいつでもブランチへ戻せる。
 
 ## 変更してはいけない設計上の制約
 - **原文bodyを保存・表示しない**。`Voice` 型（`lib/types.ts`）は要約のみ持つ。
