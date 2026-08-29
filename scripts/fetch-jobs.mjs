@@ -32,7 +32,8 @@ async function main() {
 
   const now = new Date().toISOString();
   const added = [];
-  let deferred = 0; // 今回要約できず、次回に持ち越した件数
+  let deferred = 0;              // 今回要約できず、次回に持ち越した件数
+  let permanentFailure = null;   // 待っても直らない種類の失敗（人が直す必要がある）
 
   // GLMの無料枠は混雑（429 code 1305）で個別のリクエストが落ちることがある。
   // 1件の失敗でそれまでの要約を全部捨てないよう、失敗分だけスキップする。
@@ -52,6 +53,7 @@ async function main() {
       s = await summarizeJob(j);
     } catch (e) {
       deferred++;
+      if (e.transient === false) permanentFailure = e;
       console.warn(`  ⚠ 要約に失敗（次回に回す） id=${j.id}: ${String(e.message).split("\n")[0]}`);
       continue;
     }
@@ -71,10 +73,16 @@ async function main() {
     });
   }
 
-  // 新着があったのに1件も要約できなかったのはLLM側の障害。ここで落として気付けるようにする。
-  // 新着0件（Adzunaに新しい求人がなかった）は正常なので、そのまま成功にする。
+  // 新着があったのに1件も要約できなかった場合の扱い。
+  // GLMのスロットリング（429）や時間切れなら、明日の実行でやり直せばよいので
+  // ワークフローは緑のまま終える（毎日赤になっても対処のしようがない）。
+  // モデルIDが無効・APIキーが無効といった「人が直さないと直らない」失敗を
+  // 一度でも見ていたときだけ落とす。
   if (fresh.length > 0 && added.length === 0) {
-    throw new Error(`新着${fresh.length}件をいずれも要約できなかった（LLM側の障害の可能性）`);
+    if (permanentFailure) throw permanentFailure;
+    console.warn(`⚠ 新着${fresh.length}件をいずれも要約できなかった（GLMのスロットリングか時間切れ）。次回に持ち越す`);
+    console.log(`added 0, deferred ${deferred}, total ${existing.length}（データは変更しない）`);
+    return;
   }
 
   // 新着を前に、掲載日時で並べて最新N件だけ保持
