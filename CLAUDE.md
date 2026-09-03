@@ -7,6 +7,23 @@
 サーバーレス・gitネイティブな日次更新コンテンツサイト。読み取り専用。
 
 ## セッション引き継ぎメモ（2026-07-11時点、状況が変わったら更新/削除してよい）
+- **favicon実ファイル化 + 「チルメル」SEO強化**（2026-09-03、PR #14）: faviconが
+  表示されない問題への対応。旧実装は`<link rel="icon" href="data:image/svg+xml,...">`
+  という絵文字🧪のdata URI直書きだったが、Googleの検索表示要件（クローラブルな
+  静的ファイルであること）を満たさず、検索結果やクローラーによっては表示されない
+  ケースがある。ブランドのflaskアイコン（`Icon.astro`と同じpath、色は
+  `--accent: #56d4c4`/背景`#08131a`）をベースに`public/favicon.svg`・
+  `favicon-32.png`（sharpで書き出し）・`apple-touch-icon.png`を実ファイルとして追加し、
+  `<link rel="icon">`/`<link rel="apple-touch-icon">`で参照するよう変更した。
+  あわせてJSON-LD(`WebSite`)に`alternateName: ["チルメル", "Chillmeru"]`を追加、
+  meta description/og:description/twitter:descriptionに「Chillmeru（チルメル）」を
+  明記し、カタカナ表記での検索関連性を高めた。**Search Console実測**:
+  ホームページ（`https://chillmeru.netlify.app/`）は元々インデックス登録済み
+  だった（`ページのインデックス登録`＝登録済み1件・未登録0件）。つまり「検索で
+  チルメルが出ない」の実体は未インデックスではなく、favicon非表示とチルメル表記の
+  弱さだった可能性が高い。デプロイ後にURL検査から再クロールをリクエストしようと
+  したが、Search Console側の1日の割り当て上限に達しており送信できなかった
+  （翌日以降に`URL検査`→`インデックス登録をリクエスト`で再試行可能）。
 - **daily-jobsの429対策**（2026-08-29）: 8月後半、`daily-jobs`が断続的に失敗していた
   （8/20-24, 8/27-29）。原因はモデルの変更ではなく、GLMが返す
   `429 code 1305`（该模型当前访问量过大＝無料枠のflashモデルが混雑中）。
@@ -145,18 +162,19 @@
   動作確認のみ。
 
 ## 次にClaude Codeにやってほしそうなタスク（優先順）
-1. `TELEGRAM_BOT_TOKEN`/`CHAT_ID` を使った `check-telegram` の動作確認
-   （`gh workflow run check-telegram.yml`）。`check-llm`は2026-08-29に成功を確認済み、
-   Adzunaも`daily-jobs`が求人取得まで到達しているので実質確認済み。
-   残るはTelegramだけ（`check-adzuna`を単体で回すなら合わせて）
-2. （保留）Reddit Data API再申請の要否をユーザーと相談。申請するなら却下理由
+`check-telegram`は2026-08-29に実APIで成功確認済み（GitHub Secrets 5キー全て検証済み）。
+1. （保留）Reddit Data API再申請の要否をユーザーと相談。申請するなら却下理由
    （Responsible Builder Policy不遵守/詳細不足という定型文のみ）を踏まえ、
    ユースケースの説明をより具体化する必要がある。当面はfind-voices Skill経由の
    手動投入（X）と`process-inbox.mjs`（Reddit含む）が本線。
-3. 給与統計（e-Stat / BLS）の取得スクリプトを追加。BLSはSOCコード`29-2011`
+2. 給与統計（e-Stat / BLS）の取得スクリプトを追加。BLSはSOCコード`29-2011`
    （Medical and Clinical Laboratory Technologists）だがOEWSのseries ID組み立てが複雑、
    e-Statは統計表ID（statsDataId）を年度ごとにポータルで確認する必要があり、
    どちらも実装→ワークフロー実行→ずれを直す、の反復が必要な見込み
+3. （保留）Google Search Consoleで「チルメル」のインデックス反映を数日後に再確認。
+   2026-09-03にfavicon実ファイル化・JSON-LD alternateName追加・meta description強化を
+   実施済み（下記セッション引き継ぎメモ参照）。ホームページ自体は元々インデックス
+   登録済みだったため、インデックス登録の再リクエストは次回のGoogle自動クロール待ち。
 
 ## Git運用（2026-08-16決定）
 - **長寿命の作業ブランチを使い回さない**。`feat/manual-inbox`をsquash mergeで
