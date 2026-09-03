@@ -1,5 +1,31 @@
 [
   {
+    "id": "reddit_t3_1w3d3s3",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1w3d3s3/niche_departments/",
+    "origin_country": "us",
+    "title_ja": "意外と知らないラボの専門部署",
+    "summary_ja": "「Heme・Chem・Micro・輸血・病理以外に、どんなニッチな部署があるか」という質問に、細胞治療・HLA・特殊凝固・新生児スクリーニング・高度感染症対応チームなど、普段あまり知られていない専門部署の実例が次々と寄せられた投稿。同じ検査技師でも知らない仕事の幅広さに「へえ」となる内容。",
+    "topic": "career",
+    "resonance": null,
+    "score": 67,
+    "num_comments": 81,
+    "created_utc": 1788316057,
+    "fetched_at": "2026-09-03T03:50:45.000Z"
+  },
+  {
+    "id": "reddit_t3_1w1rndr",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1w1rndr/what_asinine_procedure_does_your_lab_have_because/",
+    "origin_country": "us",
+    "title_ja": "一度のミスで増えた謎ルール",
+    "summary_ja": "「何年も前に一度起きたミスのせいで、今も残っている謎ルールは?」という問いかけに検査技師たちが次々と実例を挙げた投稿。女性患者の尿から精子様の所見が出ると法的トラブルに発展した過去があるため今も複数人での確認が必須になっている話や、トロポニンの再検査が義務化された話など、一度の事故が恒久的な追加作業として現場に残り続ける「あるある」が集まった。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 109,
+    "num_comments": 84,
+    "created_utc": 1788037637,
+    "fetched_at": "2026-09-03T03:50:45.000Z"
+  },
+  {
     "id": "reddit_t3_1w0mpyh",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1w0mpyh/anyone_else_have_total_communication_flops/",
     "origin_country": "us",
@@ -11,6 +37,19 @@
     "num_comments": 24,
     "created_utc": 1787912690,
     "fetched_at": "2026-08-29T10:26:58.000Z"
+  },
+  {
+    "id": "reddit_t3_1vzxx90",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1vzxx90/i_failed_my_mlt_ascp_today/",
+    "origin_country": "us",
+    "title_ja": "MLT資格試験に不合格、慰めの声",
+    "summary_ja": "国家資格試験(MLT ASCP)に落ちてしまったという投稿者に対し、同じように一度落ちてから合格した技師たちが「出題は運次第」「今回の点数を糧に弱点を潰せば大丈夫」と励ましのコメントを寄せた。厳しい資格試験に一度で受からないことへの不安と、それを支え合うコミュニティの温かさが垣間見える投稿。",
+    "topic": "certification",
+    "resonance": "moyamoya",
+    "score": 40,
+    "num_comments": 30,
+    "created_utc": 1787849003,
+    "fetched_at": "2026-09-03T03:50:45.000Z"
   },
   {
     "id": "reddit_t3_1vwhmk7",
