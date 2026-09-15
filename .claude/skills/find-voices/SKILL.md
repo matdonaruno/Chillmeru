@@ -180,7 +180,8 @@ LinkedInは規約でアカウント単位のリスクがある。LinkedInは今�
 **6-2. すぐ投稿できるX投稿文を handoff に置く**
 
 - 置き場所: `~/Documents/sns_operation/handoff/chillmeru-voices/`（`README.md` / `posts.md` / `posts.json` / `x-weighted-len.py`）
-- 1声 = main（見出し【海外ラボの声 #N】+ 何が起きたか + 出典行`(米Reddit・r/medlabprofessionals)`）
+- 1声 = main（見出し【海外ラボの声 #N】+ 何が起きたか + 出典行`(米Reddit・r/medlabprofessionals)`
+  + その下にサイト名の行`日本語要約は Chillmeru（チルメル）に載せています`。URLは付けない）
   → followup（コメント欄の反応 + 問いかけ）の2本立て。**`#N`は通し番号**で、既存の続きから振る
 - `posts.json`の`posts`に追記し、`batches`にバッチを1件足す。`posts.md`とREADMEの一覧・「次にやること」も更新する
 - 🔴 **文字数はXの重み付き長（全角=2）で280以内。** 書いたら`x-weighted-len.py`で全本を検証する
