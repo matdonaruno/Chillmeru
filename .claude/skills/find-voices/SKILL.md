@@ -4,7 +4,9 @@ description: >-
   Chillmeru（臨床検査技師向け「現場の声」サイト）向けに、Reddit/X/LinkedInから
   面白い・共感できる投稿を探して要約し、data/us/voices.json に手動追加するプレイブック。
   「Xの投稿探して」「Redditで良い投稿ないか探して」「現場の声を追加して」
-  「voicesに新しいの足して」のような依頼で使う。Reddit公式Data API申請は却下済みで、
+  「voicesに新しいの足して」のような依頼で使う。追加した声は、vaultのSNSネタ帳（投稿メモ）と
+  sns_operation/handoff（X投稿文）にも渡すところまでが1セット。「sns_operationに渡して」
+  「voicesを投稿メモにして」のような依頼にも使う。Reddit公式Data API申請は却下済みで、
   この対話内ブラウジングによる手動投入がReddit取得の恒久的な本線運用。
 ---
 
@@ -155,6 +157,47 @@ LinkedInは規約でアカウント単位のリスクがある。LinkedInは今�
 2. 追加した要約案（title_ja/summary_ja/topic/resonance/出典URL）を一覧で
    ユーザーに提示し、**内容を確認してもらう**。
 3. commit/pushは明示的に指示されてから実行する。
+
+### 6. SNS素材として渡す（vault投稿メモ＋sns_operation handoff）
+
+**要約の内容をユーザーが確認したら、そのバッチの声を毎回SNS側に渡す。** サイトに載せただけで
+終わらせない（2026-09-04・09-14の9件はこの手順がなかったため、09-15まで渡し漏れていた）。
+事実源は**確認済みの`summary_ja`だけ**。英語原文を読み直して情報を足さない。
+
+**6-1. vault に投稿メモを書く**（obsidian-idea-engine → opost の取り込み経路）
+
+- 置き場所: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian-IdeaVault/02-PROJECTS/Chillmeru/`
+- **1ノート1テーマ**。バッチの声をテーマでまとめる（複数の声を横断した切り口に価値がある）。
+  1本だけで強い声は単独ノートでよい。ファイル名は`YYYY-MM-DD-idea-<テーマ>.md`
+- 形式は既存ノート（`2026-09-03-idea-asinine-rules.md` / `2026-09-15-idea-*.md`）に揃える:
+  frontmatter `type: idea` / `status: seed` / `topic: Chillmeru` / `source:`（URL。複数ならYAML配列）/
+  `related: "[[chillmeru-index]]"`、本文は「元ネタ → フックになる切り口 → 具体エピソード
+  （要約・言い換え）→ 構成案 → 発信ガード確認」
+- 🔴 **tagsに`ai-generated` / `no-ai`を付けない、`07-GENERATED/`に置かない。**
+  engineの`selectMemos`が除外するため、opostまで届かなくなる
+- `chillmeru-index.md`の「## SNSネタ帳」に1行ずつリンクを足す（新しい順、BIPログとは別セクション）
+
+**6-2. すぐ投稿できるX投稿文を handoff に置く**
+
+- 置き場所: `~/Documents/sns_operation/handoff/chillmeru-voices/`（`README.md` / `posts.md` / `posts.json` / `x-weighted-len.py`）
+- 1声 = main（見出し【海外ラボの声 #N】+ 何が起きたか + 出典行`(米Reddit・r/medlabprofessionals)`）
+  → followup（コメント欄の反応 + 問いかけ）の2本立て。**`#N`は通し番号**で、既存の続きから振る
+- `posts.json`の`posts`に追記し、`batches`にバッチを1件足す。`posts.md`とREADMEの一覧・「次にやること」も更新する
+- 🔴 **文字数はXの重み付き長（全角=2）で280以内。** 書いたら`x-weighted-len.py`で全本を検証する
+- 本文に生URLを入れない（URL付き投稿は$0.20）。出典はサブレディット名のみ（Xならアカウント名を出さず「米X」等）
+- 文体は`~/Documents/sns_operation/x_historu_noAI.txt`（本人の非AI投稿）が正。短い段落、言い差しか問いかけで終える
+
+**発信ガード（6-1・6-2共通）**
+
+- 出典行・「海外」の明示を削らない。消すと投稿者自身の職場の話に読める（匿名性ルール: 職場が割れるのがNG）
+- 一人称で自分の職場の話にしない（「うちでも〜」NG）。メーカー名・実製品名を批判的な文脈で出さない
+- 告発に読める話（給料未払い等）は出来事だけを書き、原因を推測しない
+- 健康・特性の話（ADHD等）は「向いている/向いていない」と一般化しない
+- 他職種への不満は投稿者の発言として括弧に入れ、地の文では責めない
+- スクリーンショットを添付するならRedditのユーザー名を塗りつぶす
+
+vault・handoffはどちらもChillmeruリポジトリの外なので、commit対象ではない。
+**投稿そのものはしない**（投稿は運用側・ユーザーが判断する）。
 
 ## 参考: このSkillが生まれた経緯
 
