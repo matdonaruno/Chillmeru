@@ -1,5 +1,44 @@
 [
   {
+    "id": "reddit_t3_1wh1z6r",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wh1z6r/in_case_you_feel_your_work_is_neglected/",
+    "origin_country": "us",
+    "title_ja": "医学生たちは検査を信頼していた",
+    "summary_ja": "友人とビデオ通話をしていた技師が、薄い仕切りの向こうの教室から聞こえてくる医学生たちの会話に気づいた。どの検査をオーダーすべきか、最終的な答えは検査室を信頼する、という話が延々と続いていたという。「自分たちの仕事がどれだけ頼りにされているか、検査室の人間は案外知らない」として、「誰も自分たちの存在なんて知らない」という気持ちが少し和らいだ、と書いている。",
+    "topic": "culture",
+    "resonance": null,
+    "score": 46,
+    "num_comments": 1,
+    "created_utc": 1789482549,
+    "fetched_at": "2026-09-15T23:21:44.000Z"
+  },
+  {
+    "id": "reddit_t3_1wh1huq",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wh1huq/lab_to_dental_hygiene/",
+    "origin_country": "us",
+    "title_ja": "検査から歯科衛生士への転職を考える",
+    "summary_ja": "MLT5年目、今年も昇給はないと告げられた技師が、地域のMLT求人は3件しかない一方、歯科衛生士は新卒でも時給50〜60ドル・週4日勤務・福利厚生つきの求人が何十件もあると知り、学び直しを検討し始めた。コメントには「ここで聞いても『この道に残れ』と言われるだけ」という忠告や、「歯科衛生士は給料は上だが、体力的にも精神的にも検査よりきつい」という身近な例が寄せられた。",
+    "topic": "career",
+    "resonance": "moyamoya",
+    "score": 16,
+    "num_comments": 38,
+    "created_utc": 1789481450,
+    "fetched_at": "2026-09-15T23:21:44.000Z"
+  },
+  {
+    "id": "reddit_t3_1wfskz8",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wfskz8/i_dont_think_i_like_working_in_healthcare/",
+    "origin_country": "us",
+    "title_ja": "医療の重さに向いていない気がする",
+    "summary_ja": "人の健康を預かるストレスがつらく、採血も怖い、溶血による偽の高カリウムをそのまま報告してしまった——別の人が気づいて事なきを得たが、自分はこの仕事に向いていないのではないか、という吐露。コメントには「それだけ重く受け止めているのは、患者を数字として見ていない証拠」「ミスは起きる前提だから何重にもチェックがある」という励ましと、「どの分野にもそれぞれのしんどさがある」という現実的な助言が並んだ。",
+    "topic": "career",
+    "resonance": "moyamoya",
+    "score": 76,
+    "num_comments": 21,
+    "created_utc": 1789357625,
+    "fetched_at": "2026-09-15T23:21:44.000Z"
+  },
+  {
     "id": "reddit_t3_1wewih0",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wewih0/when_the_patient_has_no_history_hgb_of_3_and/",
     "origin_country": "us",
@@ -11,6 +50,19 @@
     "num_comments": 40,
     "created_utc": 1789269819,
     "fetched_at": "2026-09-14T12:10:09.000Z"
+  },
+  {
+    "id": "reddit_t3_1weu3m5",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1weu3m5/where_did_all_the_pay_transparency_posts_go/",
+    "origin_country": "us",
+    "title_ja": "給与の相場が知りたいのに",
+    "summary_ja": "州をまたぐ転職を考えている技師が、以前このコミュニティにあったはずの給与情報の一覧が見つからないと嘆き、「病院は提示できる上限も下限も決まっているのに、なぜ求人に給与を書かないのか」と問いかけた。最も賛同を集めたコメントは「『給料の話は下品』という空気は、同僚のあいだで差をつけても分からないようにするために作られたのでは」。求人に給与幅の明示を義務づけた州のリストも共有された。",
+    "topic": "salary",
+    "resonance": "moyamoya",
+    "score": 51,
+    "num_comments": 43,
+    "created_utc": 1789262681,
+    "fetched_at": "2026-09-15T23:21:44.000Z"
   },
   {
     "id": "reddit_t3_1weq5u5",
@@ -37,6 +89,32 @@
     "num_comments": 34,
     "created_utc": 1789250201,
     "fetched_at": "2026-09-14T12:10:09.000Z"
+  },
+  {
+    "id": "reddit_t3_1wehbhy",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wehbhy/clear_tube_label_means_the_entire_tube_is_the/",
+    "origin_country": "us",
+    "title_ja": "ラベルを透明にすれば全部が窓",
+    "summary_ja": "採血管のラベルを透明にして、チューブ全体が中身を確認できる「窓」になるようにした製品が紹介され、その週の人気投稿になった。コメントには「ラベルで窓を塞がれてしまうことがあるので、これは助かる」「採血量が足りないのをラベルで隠せなくなる」と歓迎する声が並ぶ一方、「それでも塞ぐ方法を見つけてくると思う」という、諦めの混じった予想もあった。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 318,
+    "num_comments": 42,
+    "created_utc": 1789231157,
+    "fetched_at": "2026-09-15T23:21:44.000Z"
+  },
+  {
+    "id": "reddit_t3_1wdtsar",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wdtsar/media_shortage/",
+    "origin_country": "us",
+    "title_ja": "培地が軒並み入荷待ち",
+    "summary_ja": "血液寒天・サブロー・HE・MRSA用・カンジダ用など、複数の培地が同時に入荷待ちになっているという投稿に、「MTMは何週間も見ていない」「うちは生化学の試薬もまとめて入荷待ちだが理由の説明がない」と各地から同様の報告が続いた。コメントでは、培地メーカーの従業員が近所にできた好待遇の工場へまとまって移ったらしい、という噂も紹介されていた。",
+    "topic": "workload",
+    "resonance": "aruaru",
+    "score": 45,
+    "num_comments": 29,
+    "created_utc": 1789163092,
+    "fetched_at": "2026-09-15T23:21:44.000Z"
   },
   {
     "id": "reddit_t3_1wdd607",
