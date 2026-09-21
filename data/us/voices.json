@@ -1,5 +1,44 @@
 [
   {
+    "id": "reddit_t3_1wjsep8",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wjsep8/hooray_we_got_a_new_shipment_of_mac/",
+    "origin_country": "us",
+    "title_ja": "届いた培地が箱ごとカビだらけ",
+    "summary_ja": "「マッコンキー寒天の新しい入荷が来た！」と喜んだのも束の間、箱ごとカビに覆われていたという写真つきの投稿。コメントには「味付け済み」「もう発育しているから同定するだけでいい」「これも欠品の一因では」と笑いが並ぶ一方、「メーカーの統合が進んで品質管理が落ちている」「うちに届いたものは最初から期限切れだった」という声も寄せられた。全米で培地が不足しているという指摘もあった。",
+    "topic": "workload",
+    "resonance": "aruaru",
+    "score": 783,
+    "num_comments": 61,
+    "created_utc": 1789749223,
+    "fetched_at": "2026-09-21T08:23:35.000Z"
+  },
+  {
+    "id": "reddit_t3_1wiyto3",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wiyto3/what_are_the_most_objectively_funny_places_i_can/",
+    "origin_country": "us",
+    "title_ja": "「食べるな」シールをどこに貼る",
+    "summary_ja": "「Do Not Eat（食べるな）」の赤いシールを120枚手に入れた技師が、検査室のどこに貼るのが一番おもしろいかと尋ねた投稿。コメントは「まず微生物の培地に」「そもそもなぜチョコレート寒天という名前なのか」で盛り上がり、学生時代に主要な培地を一枚ずつ舐めた同級生の報告（どれも塩辛く、薬品の後味が違った）まで飛び出した。針捨て容器や血液製剤の保冷庫など、危なっかしい候補も次々に挙がった。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 442,
+    "num_comments": 132,
+    "created_utc": 1789668760,
+    "fetched_at": "2026-09-21T08:23:35.000Z"
+  },
+  {
+    "id": "reddit_t3_1wi9ytt",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wi9ytt/along_with_a_blue_top_tube_that_has_a_label/",
+    "origin_country": "us",
+    "title_ja": "ラベルで採血量不足を隠す",
+    "summary_ja": "採血量が足りない青キャップの採血管に、ラベルを螺旋状に巻いて足りないことを見えなくした——という投稿。コメントには「しかもNICUの赤ちゃんの検体で」と絶句する声のほか、紫キャップの血を緑キャップに移して足したためカリウムが20になって発覚した、微量採血管から凝血塊を取り除けばCBCに出せると思っていた、といった伝聞が並んだ。「看護や医学の教育に、検査室がなぜそれを求めるのかを教える科目が要る」という意見も出ていた。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 649,
+    "num_comments": 27,
+    "created_utc": 1789601154,
+    "fetched_at": "2026-09-21T08:23:35.000Z"
+  },
+  {
     "id": "reddit_t3_1wh1z6r",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wh1z6r/in_case_you_feel_your_work_is_neglected/",
     "origin_country": "us",
