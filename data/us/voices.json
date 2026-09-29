@@ -1,5 +1,31 @@
 [
   {
+    "id": "reddit_t3_1wtcot1",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wtcot1/i_am_leaving_this_profession/",
+    "origin_country": "us",
+    "title_ja": "13年勤めたラボを、去ることにした",
+    "summary_ja": "13年間で病欠は2回だけだったが、人員と勤務時間の削減が四半期ごとに続き、休みも取れなかったという。ログの署名漏れで注意を受けたことが決め手となり、事務職に転職した（給与は同程度）。コメントは、祝福の声、同じ理由で去った人の話、「どの職場にも政治はある」という反論、管理職も追い込まれているという指摘に分かれた。",
+    "topic": "career",
+    "resonance": "moyamoya",
+    "score": 163,
+    "num_comments": 90,
+    "created_utc": 1790696702,
+    "fetched_at": "2026-09-29T23:31:33.739Z"
+  },
+  {
+    "id": "reddit_t3_1wljrqe",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wljrqe/what_kind_of_person_should_not_work_in_a_lab/",
+    "origin_country": "us",
+    "title_ja": "ラボに向かない人って、どんな人？",
+    "summary_ja": "就職2か月の新卒MLTが、血液学の研修でミスが続き、ラベルの取り違えも起こして「向いていないのでは」と悩んでいる。コメントは、向いていないのはミスを気にしない人であって、あなたではない、という声が大半だった。読み合わせなど仕組みでミスを防ぐ工夫や、急がないことが共有され、28年目の人も「今でもミスはする」と書いていた。",
+    "topic": "career",
+    "resonance": "moyamoya",
+    "score": 59,
+    "num_comments": 36,
+    "created_utc": 1789824886,
+    "fetched_at": "2026-09-29T23:31:33.739Z"
+  },
+  {
     "id": "reddit_t3_1wjsep8",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wjsep8/hooray_we_got_a_new_shipment_of_mac/",
     "origin_country": "us",
@@ -37,6 +63,19 @@
     "num_comments": 27,
     "created_utc": 1789601154,
     "fetched_at": "2026-09-21T08:23:35.000Z"
+  },
+  {
+    "id": "reddit_t3_1wim8hz",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wim8hz/phlebotomy_mishap/",
+    "origin_country": "us",
+    "title_ja": "初めて神経に当たったかもしれない",
+    "summary_ja": "3人だけの小さな検査室で、全員が採血も担当している。細い静脈に蝶形針を刺した直後、患者さんが腕に響く痛みを訴えたので、すぐ抜いて圧迫し、上司と主治医に報告してインシデントレポートも出した。それでも罪悪感が消えないという。コメントは「神経は見えないし防げない」「対応は適切」と励ます声が中心だった。",
+    "topic": "workload",
+    "resonance": "moyamoya",
+    "score": 20,
+    "num_comments": 8,
+    "created_utc": 1789561864,
+    "fetched_at": "2026-09-29T23:31:33.739Z"
   },
   {
     "id": "reddit_t3_1wh1z6r",
@@ -193,6 +232,19 @@
     "num_comments": 65,
     "created_utc": 1789012759,
     "fetched_at": "2026-09-14T12:10:09.000Z"
+  },
+  {
+    "id": "reddit_t3_1wamtt2",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wamtt2/collecting_my_own_samples_has_given_me_a_peace/",
+    "origin_country": "us",
+    "title_ja": "自分で採血すると、心が静かになった",
+    "summary_ja": "看護師が採血する大病院では、再採取の電話で怒鳴られる日々に疲れて転職した。今は技師が採血まで担当する病院で、溶血や凝固の原因が分かっているので再採取はほぼ無い。患者さんの前で自分が状況を説明する側になり、怒鳴られることもなくなったという。コメントでは「採血は二度とやりたくない」という声や、今も看護師に反論される人の話が出た。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 35,
+    "num_comments": 7,
+    "created_utc": 1788845557,
+    "fetched_at": "2026-09-29T23:31:33.739Z"
   },
   {
     "id": "reddit_t3_1waavqf",
