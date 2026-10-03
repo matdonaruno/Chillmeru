@@ -2,13 +2,35 @@
 import { getImage } from "astro:assets";
 import Icon from "../components/Icon.astro";
 import bg08 from "../assets/bg/bg-08.jpg";
+import microscopeYassine from "../assets/hero/microscope-yassine.jpg";
+import microscopeApex from "../assets/hero/microscope-apex.jpg";
+import glovesNci from "../assets/hero/gloves-nci.jpg";
+import tubesIza from "../assets/hero/tubes-iza.jpg";
+import tubesTestalizeme from "../assets/hero/tubes-testalizeme.jpg";
 
 // 「現場の声」「求人」は data/*.json をビルド時に import せず、クライアント側で
 // GitHub main ブランチから直接 fetch する（src/scripts/feed.client.mjs）。
 // データ更新のたびにNetlifyを再デプロイ（15クレジット消費）したくないため。
 
-// ヒーローの写真。暗く調色して使うので、軽量なwebpで十分。
-const heroPhoto = await getImage({ src: bg08, width: 1800, format: "webp", quality: 62 });
+// ヒーローの写真（すべてUnsplash）。アクセスごとにランダムで1枚だけ表示する。
+// 暗く調色して使うので軽量なwebpで十分。pos は見出し（右側）と被写体が重ならない
+// ように写真ごとに決めた background-position。credit は撮影者（不明なものは省略）。
+const heroSources = [
+  { src: bg08, pos: "60% 50%" },
+  { src: microscopeYassine, pos: "40% 45%", credit: { name: "Yassine Khalfalli", handle: "yassine_khalfalli" } },
+  { src: microscopeApex, pos: "35% 50%", credit: { name: "Apex 360", handle: "apex360_" } },
+  { src: glovesNci, pos: "40% 50%", credit: { name: "National Cancer Institute", handle: "nci" } },
+  { src: tubesIza, pos: "50% 50%", credit: { name: "Iza Gawrych", handle: "iza_y_ah" } },
+  { src: tubesTestalizeme, pos: "50% 50%", credit: { name: "TESTALIZE.ME", handle: "testalizeme" } },
+];
+const heroes = await Promise.all(
+  heroSources.map(async (h) => ({
+    ...h,
+    img: await getImage({ src: h.src, width: 1800, format: "webp", quality: 62 }),
+  }))
+);
+const heroUrls = heroes.map((h) => h.img.src);
+const credits = heroes.flatMap((h) => (h.credit ? [h.credit] : []));
 
 // OGP/Twitter Card用のシェア画像（ヒーローと同じ写真）
 const ogImage = await getImage({ src: bg08, width: 1200, format: "jpg", quality: 70 });
@@ -59,12 +81,30 @@ const websiteLd = {
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
     />
-    <link rel="preload" as="image" href={heroPhoto.src} fetchpriority="high" />
+    <script is:inline define:vars={{ heroUrls }}>
+      // 描画前に1枚選び、その写真だけ先読みする（選ばれなかった写真は読み込まれない）
+      var i = Math.floor(Math.random() * heroUrls.length);
+      document.documentElement.dataset.hero = String(i);
+      var l = document.createElement("link");
+      l.rel = "preload";
+      l.as = "image";
+      l.href = heroUrls[i];
+      l.fetchPriority = "high";
+      document.head.appendChild(l);
+    </script>
     <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />
   </head>
   <body>
     <div class="photo" aria-hidden="true">
-      <div class="photo-img" style={`background-image:url(${heroPhoto.src})`}></div>
+      {
+        heroes.map((h, i) => (
+          <div
+            class="photo-img"
+            data-i={i}
+            style={`background-image:url(${h.img.src});background-position:${h.pos}`}
+          />
+        ))
+      }
       <div class="photo-grade"></div>
     </div>
     <div class="grain" aria-hidden="true"></div>
@@ -155,6 +195,16 @@ const websiteLd = {
         <footer class="foot">
           <p>要約はすべて元投稿・元求人へリンク。原文は保存せず、敬意とトラフィックを原典に返します。</p>
           <p class="muted">Chillmeru · 非商用 · 読み取り専用</p>
+          <p class="muted credits">
+            写真:
+            <a href="https://unsplash.com/" target="_blank" rel="noopener noreferrer">Unsplash</a>
+            {credits.map((c, i) => (
+              <>
+                {i === 0 ? " / " : "、"}
+                <a href={`https://unsplash.com/@${c.handle}`} target="_blank" rel="noopener noreferrer">{c.name}</a>
+              </>
+            ))}
+          </p>
         </footer>
       </div>
     </div>
@@ -284,8 +334,8 @@ const websiteLd = {
       .photo-img {
         position: absolute;
         inset: -4%;
+        display: none;
         background-size: cover;
-        background-position: 60% 50%;
         filter: saturate(0.6) contrast(1.15) brightness(0.62);
         opacity: calc(1 - var(--p) * 0.82);
         transform: scale(calc(1.06 - var(--p) * 0.04));
@@ -300,6 +350,14 @@ const websiteLd = {
           linear-gradient(90deg, rgba(5, 11, 15, 0.82) 0%, rgba(5, 11, 15, 0.1) 62%);
         mix-blend-mode: normal;
       }
+      /* 選ばれた1枚だけ表示（JS無効時は先頭の1枚） */
+      :root:not([data-hero]) .photo-img[data-i="0"],
+      :root[data-hero="0"] .photo-img[data-i="0"],
+      :root[data-hero="1"] .photo-img[data-i="1"],
+      :root[data-hero="2"] .photo-img[data-i="2"],
+      :root[data-hero="3"] .photo-img[data-i="3"],
+      :root[data-hero="4"] .photo-img[data-i="4"],
+      :root[data-hero="5"] .photo-img[data-i="5"] { display: block; }
       @keyframes photo-settle {
         from { filter: saturate(0.4) contrast(1.1) brightness(0.2); transform: scale(1.16); }
       }
@@ -756,6 +814,8 @@ const websiteLd = {
       }
       .foot p { margin: 0.25rem 0; }
       .foot .muted { opacity: 0.8; }
+      .foot a { color: inherit; text-underline-offset: 3px; }
+      .foot a:hover { color: var(--accent); }
 
       @media (max-width: 640px) {
         .hero-foot { flex-direction: column; align-items: flex-start; gap: 1rem; }
