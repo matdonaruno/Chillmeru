@@ -1,5 +1,31 @@
 [
   {
+    "id": "reddit_t3_1wtrrb1",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wtrrb1/is_anyone_else_feeling_like_the_clinical_lab/",
+    "origin_country": "us",
+    "title_ja": "検査技師の仕事は、悪くなっている？",
+    "summary_ja": "10年目のMLSが、人手不足と言われる一方で欠員が補充されず、人員が生産性と労働時間だけで決まっていくと感じる、と投稿した。責任は増えるのに報酬は上がらない、という不満も。コメントでは、フロリダは厳しい一方、ニューヨークは労働組合の影響で給与が上がったという書き込みもあり、地域差の大きさが浮かんだ。",
+    "topic": "career",
+    "resonance": "moyamoya",
+    "score": 62,
+    "num_comments": 35,
+    "created_utc": 1790769600,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
+  },
+  {
+    "id": "reddit_t3_1wthu7n",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wthu7n/i_just_passed_the_c_ascp/",
+    "origin_country": "us",
+    "title_ja": "化学の認定資格に、一発で合格した",
+    "summary_ja": "米国の検査技師の民間資格ASCPのうち、化学分野（C）に初回で合格した人の体験談。約3か月、平日に毎日数時間、教科書と問題集を使い、AIに苦手を解説させ、章ごとの1枚まとめと暗記アプリで固めたという。試験の手応えは最悪だったが合格し、コメントでは同じ経験の合格者が祝福した。",
+    "topic": "certification",
+    "resonance": null,
+    "score": 19,
+    "num_comments": 4,
+    "created_utc": 1790769600,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
+  },
+  {
     "id": "reddit_t3_1wtcot1",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wtcot1/i_am_leaving_this_profession/",
     "origin_country": "us",
@@ -11,6 +37,45 @@
     "num_comments": 90,
     "created_utc": 1790696702,
     "fetched_at": "2026-09-29T23:31:33.739Z"
+  },
+  {
+    "id": "reddit_t3_1ws34b8",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1ws34b8/losing_steam/",
+    "origin_country": "us",
+    "title_ja": "毎週試験で、養成課程が重い",
+    "summary_ja": "MLS課程に入って2か月半、実習は好きだが、毎週ある試験と、褒められず改善点ばかり指摘される授業に疲れてきたという。運動も睡眠も減ったと書いた。コメントは「現場でも褒められない」という厳しい声のほか、同じ課程の疲れや、「消防ホースの水を飲むようなものだが短い期間」という励ましが集まった。",
+    "topic": "career",
+    "resonance": "aruaru",
+    "score": 22,
+    "num_comments": 15,
+    "created_utc": 1790596800,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
+  },
+  {
+    "id": "reddit_t3_1wqg0qf",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wqg0qf/overstaffed_lab/",
+    "origin_country": "us",
+    "title_ja": "人が多すぎて暇なのは、贅沢？",
+    "summary_ja": "900床超の病院の検査室で、各シフトに1〜2人多く、仕事の取り合いやスマホで時間をつぶす日が続くという。投稿者は「贅沢な悩みでは」と尋ねた。コメントは「人手不足の職場の方が多い」と諭す声が中心だが、時間が進まず役に立っていない感覚がつらいという共感や、配置はいつ減らされるか分からないという警告も並んだ。",
+    "topic": "workload",
+    "resonance": "moyamoya",
+    "score": 162,
+    "num_comments": 119,
+    "created_utc": 1790424000,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
+  },
+  {
+    "id": "reddit_t3_1wlxdlx",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wlxdlx/feeling_completely_defeated/",
+    "origin_country": "us",
+    "title_ja": "ひとり化学、機器停止、同僚の一言",
+    "summary_ja": "週末の化学をひとりで担当する病院のMLTが、主力の分析装置が止まり、システム連携も途切れ、試薬の校正切れまで重なって結果が遅れた。応援を頼むと、別部署の同僚に「あなたが未熟だからだ」と言われた。コメントは「ひとりで回す配置の問題」「同僚の言い方がひどい」と支える声が大半だった。",
+    "topic": "culture",
+    "resonance": "moyamoya",
+    "score": 23,
+    "num_comments": 28,
+    "created_utc": 1789992000,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
   },
   {
     "id": "reddit_t3_1wljrqe",
@@ -195,6 +260,19 @@
     "fetched_at": "2026-09-15T23:21:44.000Z"
   },
   {
+    "id": "reddit_t3_1wctloy",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wctloy/salary_negotiation/",
+    "origin_country": "us",
+    "title_ja": "新卒の初任給、時給33ドルは安い？",
+    "summary_ja": "シカゴ近郊で夜勤のMLS新卒が、面接で希望時給を33ドルと伝えてよいか尋ねた。コメントでは相場は34〜41ドルで33ドルはやや低めという声があり、夜勤手当や週末手当、離職率・強制残業・休暇の取り方を確認するよう助言された。入社時の支度金は、人手に困っている印のこともあるという。",
+    "topic": "salary",
+    "resonance": null,
+    "score": 10,
+    "num_comments": 36,
+    "created_utc": 1789128000,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
+  },
+  {
     "id": "reddit_t3_1wdd607",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wdd607/ive_been_working_sooo_many_extra_hours_for_months/",
     "origin_country": "us",
@@ -260,6 +338,19 @@
     "fetched_at": "2026-09-14T12:10:09.000Z"
   },
   {
+    "id": "reddit_t3_1w93evm",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1w93evm/why_did_labcorp_lie_and_downplay_overtime_and/",
+    "origin_country": "us",
+    "title_ja": "面接で聞いた話と、現場が違った",
+    "summary_ja": "大手の臨床検査受託会社に早朝シフトで入った投稿者が、面接では「残業は任意」「個人の生産性指標はない」と聞いたのに、2週間で、多くの人が夕方まで残り、午前中の発送期限や長い監査もあると知ったという。コメントは「定時で帰ればいい」「どこにも目標はある」という声と、同じように説明が違ったという体験談に分かれた。",
+    "topic": "workload",
+    "resonance": "moyamoya",
+    "score": 63,
+    "num_comments": 66,
+    "created_utc": 1788782400,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
+  },
+  {
     "id": "reddit_t3_1w66lz1",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1w66lz1/i_wanna_quit_so_badbut_the_money_keeps_me_going/",
     "origin_country": "us",
@@ -271,6 +362,19 @@
     "num_comments": 41,
     "created_utc": 1788440118,
     "fetched_at": "2026-09-03T21:24:49.000Z"
+  },
+  {
+    "id": "reddit_t3_1w5qy2c",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1w5qy2c/mlt_vs_rad_tech_please_help/",
+    "origin_country": "us",
+    "title_ja": "検査技師と放射線技師、どっちに進む？",
+    "summary_ja": "MLT課程の在学中の人が、MRI/CTを視野に放射線技師へ乗り換えるべきか相談した。コメントは、放射線技師の方が給与が高く勤務も選びやすいという体験談が多い一方、患者との接触は多く、検査技師はほぼ患者と話さない、という違いも挙がった。課程を移った人や、検査とX線の両方を担う人もいる。",
+    "topic": "career",
+    "resonance": null,
+    "score": 4,
+    "num_comments": 21,
+    "created_utc": 1788436800,
+    "fetched_at": "2026-10-03T14:32:53.202Z"
   },
   {
     "id": "reddit_t3_1w5nvs2",
