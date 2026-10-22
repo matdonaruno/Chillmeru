@@ -1,5 +1,57 @@
 [
   {
+    "id": "reddit_t3_1x0zknh",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1x0zknh/ascp_requiring_documentation_uploads_of_ces/",
+    "origin_country": "us",
+    "title_ja": "ASCPの継続教育、証明書の提出が必須に",
+    "summary_ja": "ASCPの認定は3年ごとの更新で継続教育(CE)の申告が必須だが、これまでは自己申告で、証明書は抜き打ちの監査のときだけ必要だった。2027年からは申告時に証明書のアップロードが必要になる。コメント欄は「ASCPの収益目的だ」という不満と、「職場はどこも証明書を求めるし、むしろ遅すぎた」という容認で割れた。",
+    "topic": "certification",
+    "resonance": "moyamoya",
+    "score": 102,
+    "num_comments": 61,
+    "created_utc": 1791486000,
+    "fetched_at": "2026-10-12T01:56:23.092Z"
+  },
+  {
+    "id": "reddit_t3_1wzcbnj",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wzcbnj/for_those_who_took_the_ascp_exam_what_was_the/",
+    "origin_country": "us",
+    "title_ja": "ASCP試験で「勉強しておけば」と悔やんだ問題",
+    "summary_ja": "ASCP試験で、勉強しておけばよかったと思った問題を聞くスレ。投稿者はサラセミアのHbA2の問題を忘れた。コメントでは、補正白血球数などの計算、抗酸菌、ANA画像、MALDI-TOF、TEGなど、授業で軽く触れただけの項目が出たという声が並ぶ。それでも合格した人が多い。",
+    "topic": "certification",
+    "resonance": "aruaru",
+    "score": 10,
+    "num_comments": 21,
+    "created_utc": 1791288000,
+    "fetched_at": "2026-10-12T01:56:23.092Z"
+  },
+  {
+    "id": "reddit_t3_1wz9lvh",
+    "url": "https://www.reddit.com/r/labrats/comments/1wz9lvh/i_just_feel_really_stupid/",
+    "origin_country": "",
+    "title_ja": "初めての手順を知らず、泣いてしまった博士課程の学生",
+    "summary_ja": "博士課程の学生が、プロテオミクス用のタンパク質試料で、必要な沈殿の工程を知らないまま提出し、自分を責めて泣いた。コメントは「間違いに気づいて直し、繰り返さないのが良い科学者」「教わっていないことは知らなくて当然」と励ます声が中心。",
+    "topic": "culture",
+    "resonance": "aruaru",
+    "score": 13,
+    "num_comments": 17,
+    "created_utc": 1791280800,
+    "fetched_at": "2026-10-12T21:28:23.889Z"
+  },
+  {
+    "id": "reddit_t3_1wymc43",
+    "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wymc43/med_lab_technician_job/",
+    "origin_country": "ca",
+    "title_ja": "カナダの検査助手、1年探しても就職できない",
+    "summary_ja": "カナダで検査助手・技師(MLPAO・CSMLS認定)の資格を持つ投稿者が、1年応募を続けても仕事が決まらず、技師(Technologist)課程への進学も考えている。コメントは最初、資格がないと誤解して厳しかったが、資格ありと分かると「米国なら2年制MLTとASCP-MLTで困らない」「地方なら人手不足で、契約金や引っ越し支援も出る」という声に変わった。",
+    "topic": "career",
+    "resonance": "moyamoya",
+    "score": 2,
+    "num_comments": 12,
+    "created_utc": 1791201600,
+    "fetched_at": "2026-10-12T21:28:23.889Z"
+  },
+  {
     "id": "reddit_t3_1wtrrb1",
     "url": "https://www.reddit.com/r/medlabprofessionals/comments/1wtrrb1/is_anyone_else_feeling_like_the_clinical_lab/",
     "origin_country": "us",
